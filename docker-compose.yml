@@ -1,0 +1,45 @@
+services:
+  app:
+    build: .
+    container_name: billsons_network_app
+    env_file:
+      - .env
+    depends_on:
+      - db
+    volumes:
+      - ./data/uploads:/data/uploads
+      - ./data/exports:/data/exports
+      - ./data/generated:/data/generated
+      - ./data/temp:/data/temp
+      - ./:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - default
+      - edge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.billsons-network.rule=Host(`test.billson.network`)"
+      - "traefik.http.routers.billsons-network.entrypoints=websecure"
+      - "traefik.http.routers.billsons-network.tls.certresolver=letsencrypt"
+      - "traefik.http.services.billsons-network.loadbalancer.server.port=8000"
+
+  db:
+    image: postgres:17
+    container_name: billsons_network_db
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - default
+
+volumes:
+  postgres_data:
+
+networks:
+  edge:
+    external: true

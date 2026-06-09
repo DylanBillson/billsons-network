@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card">
+
+    <h1 style="margin-top: 0;">
+        Welcome to Billson's Network
+    </h1>
+
+    <p>
+        Network documentation and management platform.
+    </p>
+
+    <hr>
+
+    <p>
+        <strong>Logged in as:</strong>
+        {{ current_user.display_name }}
+    </p>
+
+    <p>
+        <strong>Username:</strong>
+        {{ current_user.username }}
+    </p>
+
+    <p>
+        <strong>Role:</strong>
+        {{ current_user.role }}
+    </p>
+
+    {% if is_admin %}
+
+        <p>
+            <strong>Permissions:</strong>
+            Administrator
+        </p>
+
+    {% else %}
+
+        <p>
+            <strong>Permissions:</strong>
+            User
+        </p>
+
+    {% endif %}
+
+</div>
+
+<br>
+
+<div class="card">
+
+    <h2 style="margin-top: 0;">
+        System Status
+    </h2>
+
+    <ul>
+        <li>Authentication: Operational</li>
+        <li>Database: Connected</li>
+        <li>Locations: Not yet configured</li>
+        <li>Devices: 0</li>
+        <li>Cables: 0</li>
+        <li>VLANs: 0</li>
+        <li>SSIDs: 0</li>
+    </ul>
+
+</div>
+
+{% endblock %}

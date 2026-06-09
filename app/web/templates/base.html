@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1"
+    >
+
+    <title>{{ title }}</title>
+
+    <link
+        rel="stylesheet"
+        href="/static/css/app.css"
+    >
+</head>
+<body>
+
+{% if current_user is defined and current_user %}
+
+<header class="topbar">
+
+    <div class="topbar-left">
+
+        <a
+            href="/"
+            class="app-title"
+        >
+            Billson's Network
+        </a>
+
+        <div class="location-switcher">
+
+            <select
+                class="nav-select"
+                disabled
+            >
+                <option>
+                    Select Location
+                </option>
+            </select>
+
+        </div>
+
+    </div>
+
+    <div class="topbar-right">
+
+        {% if is_admin is defined and is_admin %}
+
+            <a
+                href="/admin"
+                class="nav-button"
+            >
+                Admin
+            </a>
+
+        {% endif %}
+
+        <a
+            href="/settings"
+            class="nav-button"
+        >
+            Settings
+        </a>
+
+        <form
+            method="post"
+            action="/logout"
+            style="margin: 0;"
+        >
+            <button
+                type="submit"
+                class="nav-button"
+            >
+                Logout
+            </button>
+        </form>
+
+    </div>
+
+</header>
+
+{% endif %}
+
+<main class="content">
+
+    {% block content %}
+    {% endblock %}
+
+</main>
+
+{% if current_user is defined and current_user %}
+
+<footer class="bottom-tabs">
+
+    <a href="/map" class="tab">
+        Map
+    </a>
+
+    <a href="/devices" class="tab">
+        Devices
+    </a>
+
+    <a href="/cables" class="tab">
+        Cables
+    </a>
+
+    <a href="/vlans" class="tab">
+        VLANs
+    </a>
+
+    <a href="/ssids" class="tab">
+        SSIDs
+    </a>
+
+</footer>
+
+{% endif %}
+
+</body>
+</html>
