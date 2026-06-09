@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import Optional
-
-from sqlalchemy import Boolean, DateTime, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base, SoftDeleteMixin, TimestampMixin
@@ -59,4 +58,10 @@ class User(Base, TimestampMixin, SoftDeleteMixin):
     last_login_at: Mapped[Optional[datetime]] = mapped_column(
         DateTime(timezone=True),
         nullable=True,
+    )
+
+    selected_location_id: Mapped[int | None] = mapped_column(
+        ForeignKey("locations.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
     )

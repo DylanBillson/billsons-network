@@ -30,18 +30,39 @@
             Billson's Network
         </a>
 
-        <div class="location-switcher">
+    <div class="location-switcher">
 
-            <select
-                class="nav-select"
-                disabled
+        {% if locations %}
+
+            <form
+                method="post"
+                action="/admin/locations/select/{{ current_location.id if current_location else locations[0].id }}"
+                id="location-switch-form"
             >
-                <option>
-                    Select Location
-                </option>
-            </select>
+                <select
+                    class="nav-select"
+                    onchange="this.form.action='/admin/locations/select/' + this.value; this.form.submit();"
+                >
+                    {% for location in locations %}
+                        <option
+                            value="{{ location.id }}"
+                            {% if current_location and current_location.id == location.id %}selected{% endif %}
+                        >
+                            {{ location.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
 
-        </div>
+        {% else %}
+
+            <a href="/admin/locations/create" class="nav-button">
+                Create Location
+            </a>
+
+        {% endif %}
+
+    </div>
 
     </div>
 

@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>Create Location</h1>
+
+    <a href="/admin/locations" class="nav-button">
+        Back to Locations
+    </a>
+</div>
+
+<div class="form-container">
+
+    <div class="card">
+
+        {% if error %}
+            <div class="error-message">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="post" action="/admin/locations/create">
+
+            <div class="form-group">
+                <label for="name" class="form-label">
+                    Location Name
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    class="form-input"
+                    value="{{ form_data.name if form_data is defined else '' }}"
+                    required
+                    autofocus
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="description" class="form-label">
+                    Description
+                </label>
+
+                <input
+                    type="text"
+                    id="description"
+                    name="description"
+                    class="form-input"
+                    value="{{ form_data.description if form_data is defined else '' }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="address" class="form-label">
+                    Address
+                </label>
+
+                <textarea
+                    id="address"
+                    name="address"
+                    class="form-textarea"
+                >{{ form_data.address if form_data is defined else '' }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="notes" class="form-label">
+                    Notes
+                </label>
+
+                <textarea
+                    id="notes"
+                    name="notes"
+                    class="form-textarea"
+                >{{ form_data.notes if form_data is defined else '' }}</textarea>
+            </div>
+
+            <button type="submit" class="form-button">
+                Create Location
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
