@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h1 style="margin: 0;">
+            Devices
+        </h1>
+
+        {% if current_location %}
+            <p style="color: var(--text-secondary); margin-bottom: 0;">
+                Location: {{ current_location.name }}
+            </p>
+        {% endif %}
+    </div>
+
+    {% if is_admin %}
+        <a href="/devices/create" class="nav-button">
+            Create Device
+        </a>
+    {% endif %}
+</div>
+
+{% if not current_location %}
+
+    <div class="card">
+        <h2 style="margin-top: 0;">
+            No Location Selected
+        </h2>
+
+        <p>
+            Select or create a location before adding devices.
+        </p>
+
+        {% if is_admin %}
+            <a href="/admin/locations" class="nav-button">
+                Manage Locations
+            </a>
+        {% endif %}
+    </div>
+
+{% elif devices %}
+
+    <div class="card-grid">
+
+        {% for device in devices %}
+
+            <div class="card">
+
+                <h2 style="margin-top: 0;">
+                    <a
+                        href="/devices/{{ device.id }}"
+                        style="text-decoration: none;"
+                    >
+                        {{ device.name }}
+                    </a>
+                </h2>
+
+                <p>
+                    <strong>Type:</strong>
+                    {{ device.device_type.name if device.device_type else "Unknown" }}
+                </p>
+
+                {% if device.manufacturer or device.model %}
+                    <p>
+                        <strong>Model:</strong>
+                        {{ device.manufacturer or "" }} {{ device.model or "" }}
+                    </p>
+                {% endif %}
+
+                {% if device.ip_address %}
+                    <p>
+                        <strong>IP Address:</strong>
+                        {{ device.ip_address }}
+                    </p>
+                {% endif %}
+
+                {% if device.vlan %}
+                    <p>
+                        <strong>VLAN:</strong>
+                        {{ device.vlan.name }} ({{ device.vlan.vlan_number }})
+                    </p>
+                {% endif %}
+
+                <p>
+                    <strong>Status:</strong>
+                    {{ device.status }}
+                </p>
+
+                <p>
+                    <strong>Power:</strong>
+                    {{ device.power_source }}
+                </p>
+
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px;">
+
+                    <a
+                        href="/devices/{{ device.id }}"
+                        class="nav-button"
+                    >
+                        View
+                    </a>
+
+                    {% if is_admin %}
+
+                        <a
+                            href="/devices/{{ device.id }}/edit"
+                            class="nav-button"
+                        >
+                            Edit
+                        </a>
+
+                        <form
+                            method="post"
+                            action="/devices/{{ device.id }}/delete"
+                            style="margin: 0;"
+                        >
+                            <button
+                                type="submit"
+                                class="nav-button"
+                                onclick="return confirm('Delete this device?');"
+                            >
+                                Delete
+                            </button>
+                        </form>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% else %}
+
+    <div class="card">
+        <h2 style="margin-top: 0;">
+            No Devices
+        </h2>
+
+        <p>
+            No devices have been added for this location yet.
+        </p>
+
+        {% if is_admin %}
+            <a href="/devices/create" class="nav-button">
+                Create First Device
+            </a>
+        {% endif %}
+    </div>
+
+{% endif %}
+
+{% endblock %}

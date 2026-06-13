@@ -7,6 +7,7 @@ from app.web.routes import (
     auth_router,
     cables_router,
     dashboard_router,
+    device_ports_router,
     devices_router,
     locations_router,
     ssids_router,
@@ -28,6 +29,7 @@ app.include_router(auth_router)
 app.include_router(dashboard_router)
 app.include_router(locations_router)
 app.include_router(devices_router)
+app.include_router(device_ports_router)
 app.include_router(cables_router)
 app.include_router(vlans_router)
 app.include_router(ssids_router)

@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1 style="margin: 0;">
+            Port Management
+        </h1>
+
+        <p
+            style="
+                color: var(--text-secondary);
+                margin-bottom: 0;
+            "
+        >
+            Device: {{ device.name }}
+        </p>
+    </div>
+
+    <div
+        style="
+            display: flex;
+            gap: 10px;
+        "
+    >
+
+        <a
+            href="/devices/{{ device.id }}"
+            class="nav-button"
+        >
+            Back to Device
+        </a>
+
+    </div>
+
+</div>
+
+<div class="card">
+
+    <h2 style="margin-top: 0;">
+        Add Ports
+    </h2>
+
+    <form
+        method="post"
+        action="/devices/{{ device.id }}/ports/add"
+        style="
+            display: flex;
+            gap: 10px;
+            align-items: end;
+            flex-wrap: wrap;
+        "
+    >
+
+        <div class="form-group" style="margin: 0;">
+
+            <label
+                class="form-label"
+                for="number_to_add"
+            >
+                Number of Ports
+            </label>
+
+            <input
+                type="number"
+                id="number_to_add"
+                name="number_to_add"
+                class="form-input"
+                min="1"
+                value="1"
+                required
+            >
+
+        </div>
+
+        <button
+            type="submit"
+            class="form-button"
+            style="
+                width: auto;
+                min-width: 140px;
+            "
+        >
+            Add Ports
+        </button>
+
+    </form>
+
+</div>
+
+<div
+    class="card"
+    style="margin-top: 20px;"
+>
+
+    <div
+        style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        "
+    >
+
+        <h2 style="margin: 0;">
+            Ports
+        </h2>
+
+        <span style="color: var(--text-secondary);">
+            {{ ports|length }} ports
+        </span>
+
+    </div>
+
+    {% if ports %}
+
+        <table class="data-table">
+
+            <thead>
+
+                <tr>
+                    <th>Port</th>
+                    <th>Sort Order</th>
+                    <th>Actions</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for port in ports %}
+
+                    <tr>
+
+                        <td>
+                            {{ port.label }}
+                        </td>
+
+                        <td>
+                            {{ port.sort_order }}
+                        </td>
+
+                        <td>
+
+                            <div
+                                style="
+                                    display: flex;
+                                    gap: 10px;
+                                "
+                            >
+
+                                <a
+                                    href="/devices/{{ device.id }}/ports/{{ port.id }}/edit"
+                                    class="nav-button"
+                                >
+                                    Edit
+                                </a>
+
+                                <form
+                                    method="post"
+                                    action="/devices/{{ device.id }}/ports/{{ port.id }}/delete"
+                                    style="margin: 0;"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="nav-button"
+                                        onclick="return confirm('Delete this port?');"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    {% else %}
+
+        <p>
+            This device currently has no ports.
+        </p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

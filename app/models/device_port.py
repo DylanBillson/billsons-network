@@ -1,5 +1,5 @@
 from sqlalchemy import ForeignKey, Integer, String, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, TimestampMixin
 
@@ -17,8 +17,16 @@ class DevicePort(Base, TimestampMixin):
     __tablename__ = "device_ports"
 
     __table_args__ = (
-        UniqueConstraint("device_id", "label", name="uq_device_ports_device_id_label"),
-        UniqueConstraint("device_id", "sort_order", name="uq_device_ports_device_id_sort_order"),
+        UniqueConstraint(
+            "device_id",
+            "label",
+            name="uq_device_ports_device_id_label",
+        ),
+        UniqueConstraint(
+            "device_id",
+            "sort_order",
+            name="uq_device_ports_device_id_sort_order",
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -41,4 +49,9 @@ class DevicePort(Base, TimestampMixin):
     sort_order: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
+    )
+
+    device = relationship(
+        "Device",
+        back_populates="ports",
     )

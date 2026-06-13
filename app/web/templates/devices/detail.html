@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1 style="margin: 0;">
+            {{ device.name }}
+        </h1>
+
+        <p style="margin-top: 8px; color: var(--text-secondary);">
+            {{ device.device_type.name if device.device_type else "Unknown Type" }}
+        </p>
+    </div>
+
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+
+        <a href="/devices" class="nav-button">
+            Back
+        </a>
+
+        {% if is_admin %}
+            <a href="/devices/{{ device.id }}/edit" class="nav-button">
+                Edit Device
+            </a>
+
+            <a href="/devices/{{ device.id }}/ports" class="nav-button">
+                Manage Ports
+            </a>
+        {% endif %}
+
+    </div>
+
+</div>
+
+<div class="card-grid">
+
+    <div class="card">
+
+        <h2 style="margin-top: 0;">
+            Device Information
+        </h2>
+
+        <table class="detail-table">
+            <tr>
+                <th>Name</th>
+                <td>{{ device.name }}</td>
+            </tr>
+
+            <tr>
+                <th>Type</th>
+                <td>{{ device.device_type.name if device.device_type else "-" }}</td>
+            </tr>
+
+            <tr>
+                <th>Location</th>
+                <td>{{ device.location.name if device.location else "-" }}</td>
+            </tr>
+
+            <tr>
+                <th>Status</th>
+                <td>{{ device.status }}</td>
+            </tr>
+
+            <tr>
+                <th>Manufacturer</th>
+                <td>{{ device.manufacturer or "-" }}</td>
+            </tr>
+
+            <tr>
+                <th>Model</th>
+                <td>{{ device.model or "-" }}</td>
+            </tr>
+
+            <tr>
+                <th>Serial Number</th>
+                <td>{{ device.serial_number or "-" }}</td>
+            </tr>
+
+            <tr>
+                <th>MAC Address</th>
+                <td>{{ device.mac_address or "-" }}</td>
+            </tr>
+        </table>
+
+    </div>
+
+    <div class="card">
+
+        <h2 style="margin-top: 0;">
+            Network Information
+        </h2>
+
+        <table class="detail-table">
+            <tr>
+                <th>IP Address</th>
+                <td>{{ device.ip_address or "-" }}</td>
+            </tr>
+
+            <tr>
+                <th>Assignment</th>
+                <td>{{ device.ip_assignment_type or "-" }}</td>
+            </tr>
+
+            <tr>
+                <th>VLAN</th>
+                <td>
+                    {% if device.vlan %}
+                        {{ device.vlan.name }} ({{ device.vlan.vlan_number }})
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+
+            <tr>
+                <th>Power</th>
+                <td>{{ device.power_source }}</td>
+            </tr>
+
+            <tr>
+                <th>Supplied By</th>
+                <td>{{ device.supplied_by or "-" }}</td>
+            </tr>
+
+            <tr>
+                <th>Purchase Date</th>
+                <td>
+                    {% if device.purchase_date %}
+                        {{ device.purchase_date }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+</div>
+
+{% if device.notes %}
+
+    <div class="card" style="margin-top: 20px;">
+        <h2 style="margin-top: 0;">
+            Notes
+        </h2>
+
+        <p style="white-space: pre-wrap;">
+            {{ device.notes }}
+        </p>
+    </div>
+
+{% endif %}
+
+<div class="card" style="margin-top: 20px;">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+
+        <h2 style="margin: 0;">
+            Ports
+        </h2>
+
+        <div style="display: flex; gap: 10px; align-items: center;">
+
+            <span style="color: var(--text-secondary);">
+                {{ ports|length }} ports
+            </span>
+
+            {% if is_admin %}
+                <a href="/devices/{{ device.id }}/ports" class="nav-button">
+                    Manage Ports
+                </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    {% if ports %}
+
+        <div class="port-grid">
+
+            {% for port in ports %}
+
+                {% if is_admin %}
+                    <a
+                        href="/devices/{{ device.id }}/ports/{{ port.id }}/edit"
+                        class="port-card port-card-link"
+                    >
+                        <div class="port-label">
+                            {{ port.label }}
+                        </div>
+                    </a>
+                {% else %}
+                    <div class="port-card">
+                        <div class="port-label">
+                            {{ port.label }}
+                        </div>
+                    </div>
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <p>
+            No ports have been created for this device.
+        </p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

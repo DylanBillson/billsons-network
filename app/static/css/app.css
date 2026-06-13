@@ -223,3 +223,69 @@ a {
     background: var(--danger-bg);
     border: 1px solid var(--danger-border);
 }
+
+.detail-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.detail-table th {
+    width: 180px;
+    text-align: left;
+    padding: 8px;
+    color: var(--text-secondary);
+    vertical-align: top;
+}
+
+.detail-table td {
+    padding: 8px;
+}
+
+.port-grid {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fill,
+        minmax(90px, 1fr)
+    );
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.port-card {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px;
+    text-align: center;
+}
+
+.port-label {
+    font-weight: 600;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.data-table th,
+.data-table td {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.data-table th {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.port-card-link {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.port-card-link:hover {
+    background: var(--accent);
+}

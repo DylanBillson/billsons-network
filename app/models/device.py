@@ -1,7 +1,7 @@
 from datetime import date
 
 from sqlalchemy import Date, ForeignKey, Integer, String, Text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, SoftDeleteMixin, TimestampMixin
 
@@ -108,4 +108,25 @@ class Device(Base, TimestampMixin, SoftDeleteMixin):
     photo_path: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
+    )
+
+    location = relationship(
+        "Location",
+        foreign_keys=[location_id],
+    )
+
+    device_type = relationship(
+        "DeviceType",
+        foreign_keys=[device_type_id],
+    )
+
+    vlan = relationship(
+        "VLAN",
+        foreign_keys=[vlan_id],
+    )
+
+    ports = relationship(
+        "DevicePort",
+        back_populates="device",
+        order_by="DevicePort.sort_order",
     )
