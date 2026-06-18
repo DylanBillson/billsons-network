@@ -1,7 +1,7 @@
 from datetime import date
 
 from sqlalchemy import CheckConstraint, Date, ForeignKey, Integer, String, Text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, SoftDeleteMixin, TimestampMixin
 
@@ -106,4 +106,19 @@ class Cable(Base, TimestampMixin, SoftDeleteMixin):
         nullable=False,
         default="active",
         index=True,
+    )
+
+    location = relationship(
+        "Location",
+        foreign_keys=[location_id],
+    )
+
+    from_port = relationship(
+        "DevicePort",
+        foreign_keys=[from_port_id],
+    )
+
+    to_port = relationship(
+        "DevicePort",
+        foreign_keys=[to_port_id],
     )

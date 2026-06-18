@@ -104,15 +104,33 @@
             </tr>
 
             <tr>
-                <th>VLAN</th>
+                <th>Device VLAN</th>
                 <td>
                     {% if device.vlan %}
-                        {{ device.vlan.name }} ({{ device.vlan.vlan_number }})
+                        <a href="/vlans/{{ device.vlan.id }}" class="vlan-badge">
+                            VLAN {{ device.vlan.vlan_number }}
+                        </a>
+
+                        <span>
+                            {{ device.vlan.name }}
+                        </span>
                     {% else %}
                         -
                     {% endif %}
                 </td>
             </tr>
+
+            {% if device.vlan %}
+                <tr>
+                    <th>Subnet</th>
+                    <td>{{ device.vlan.subnet or "-" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Gateway</th>
+                    <td>{{ device.vlan.gateway or "-" }}</td>
+                </tr>
+            {% endif %}
 
             <tr>
                 <th>Power</th>
@@ -184,19 +202,126 @@
 
             {% for port in ports %}
 
+                {% set cable = port_cable_map.get(port.id) %}
+                {% set other_port = none %}
+
+                {% if cable %}
+                    {% if cable.from_port_id == port.id %}
+                        {% set other_port = cable.to_port %}
+                    {% elif cable.to_port_id == port.id %}
+                        {% set other_port = cable.from_port %}
+                    {% endif %}
+                {% endif %}
+
                 {% if is_admin %}
                     <a
                         href="/devices/{{ device.id }}/ports/{{ port.id }}/edit"
-                        class="port-card port-card-link"
+                        class="port-card port-card-link {% if cable %}port-connected{% else %}port-available{% endif %}"
                     >
                         <div class="port-label">
                             {{ port.label }}
                         </div>
+
+                        {% if cable %}
+                            <div class="port-connection">
+                                <span class="cable-badge">
+                                    {{ cable.cable_id }}
+                                </span>
+
+                                {% if other_port and other_port.device %}
+                                    <span>
+                                        {{ other_port.device.name }} / {{ other_port.label }}
+                                    </span>
+                                {% else %}
+                                    <span>
+                                        Connected
+                                    </span>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="port-connection">
+                                Available
+                            </div>
+                        {% endif %}
+
+                        <div class="port-vlan">
+                            {% if port.vlan_mode == "none" %}
+                                <span class="vlan-mode-badge">
+                                    No VLAN
+                                </span>
+                            {% else %}
+                                <span class="vlan-mode-badge">
+                                    {{ port.vlan_mode }}
+                                </span>
+
+                                {% if port.vlan %}
+                                    <span class="vlan-badge">
+                                        VLAN {{ port.vlan.vlan_number }}
+                                    </span>
+
+                                    <span>
+                                        {{ port.vlan.name }}
+                                    </span>
+                                {% else %}
+                                    <span style="color: var(--text-secondary);">
+                                        No VLAN selected
+                                    </span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
                     </a>
                 {% else %}
-                    <div class="port-card">
+                    <div class="port-card {% if cable %}port-connected{% else %}port-available{% endif %}">
                         <div class="port-label">
                             {{ port.label }}
+                        </div>
+
+                        {% if cable %}
+                            <div class="port-connection">
+                                <span class="cable-badge">
+                                    {{ cable.cable_id }}
+                                </span>
+
+                                {% if other_port and other_port.device %}
+                                    <span>
+                                        {{ other_port.device.name }} / {{ other_port.label }}
+                                    </span>
+                                {% else %}
+                                    <span>
+                                        Connected
+                                    </span>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <div class="port-connection">
+                                Available
+                            </div>
+                        {% endif %}
+
+                        <div class="port-vlan">
+                            {% if port.vlan_mode == "none" %}
+                                <span class="vlan-mode-badge">
+                                    No VLAN
+                                </span>
+                            {% else %}
+                                <span class="vlan-mode-badge">
+                                    {{ port.vlan_mode }}
+                                </span>
+
+                                {% if port.vlan %}
+                                    <span class="vlan-badge">
+                                        VLAN {{ port.vlan.vlan_number }}
+                                    </span>
+
+                                    <span>
+                                        {{ port.vlan.name }}
+                                    </span>
+                                {% else %}
+                                    <span style="color: var(--text-secondary);">
+                                        No VLAN selected
+                                    </span>
+                                {% endif %}
+                            {% endif %}
                         </div>
                     </div>
                 {% endif %}

@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <h1>Edit VLAN {{ vlan.vlan_number }}</h1>
+
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="/vlans/{{ vlan.id }}" class="nav-button">
+            View VLAN
+        </a>
+
+        <a href="/vlans" class="nav-button">
+            Back to VLANs
+        </a>
+    </div>
+
+</div>
+
+<div class="form-container" style="max-width: 900px;">
+
+    <div class="card">
+
+        {% if error %}
+
+            <div class="error-message">
+                {{ error }}
+            </div>
+
+        {% endif %}
+
+        <form method="post" action="/vlans/{{ vlan.id }}/edit">
+
+            <div class="form-group">
+                <label for="name" class="form-label">
+                    VLAN Name
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    class="form-input"
+                    value="{{ form_data.name if form_data is defined else vlan.name }}"
+                    required
+                    autofocus
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="vlan_number" class="form-label">
+                    VLAN ID
+                </label>
+
+                <input
+                    type="number"
+                    id="vlan_number"
+                    name="vlan_number"
+                    class="form-input"
+                    min="1"
+                    max="4094"
+                    value="{{ form_data.vlan_number if form_data is defined else vlan.vlan_number }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="purpose" class="form-label">
+                    Purpose
+                </label>
+
+                <textarea
+                    id="purpose"
+                    name="purpose"
+                    class="form-textarea"
+                >{{ form_data.purpose if form_data is defined else vlan.purpose or '' }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="subnet" class="form-label">
+                    Subnet
+                </label>
+
+                <input
+                    type="text"
+                    id="subnet"
+                    name="subnet"
+                    class="form-input"
+                    placeholder="192.168.20.0/24"
+                    value="{{ form_data.subnet if form_data is defined else vlan.subnet or '' }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="gateway" class="form-label">
+                    Gateway
+                </label>
+
+                <input
+                    type="text"
+                    id="gateway"
+                    name="gateway"
+                    class="form-input"
+                    placeholder="192.168.20.1"
+                    value="{{ form_data.gateway if form_data is defined else vlan.gateway or '' }}"
+                >
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+
+                <div class="form-group">
+                    <label for="dhcp_range_start" class="form-label">
+                        DHCP Range Start
+                    </label>
+
+                    <input
+                        type="text"
+                        id="dhcp_range_start"
+                        name="dhcp_range_start"
+                        class="form-input"
+                        placeholder="192.168.20.100"
+                        value="{{ form_data.dhcp_range_start if form_data is defined else vlan.dhcp_range_start or '' }}"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="dhcp_range_end" class="form-label">
+                        DHCP Range End
+                    </label>
+
+                    <input
+                        type="text"
+                        id="dhcp_range_end"
+                        name="dhcp_range_end"
+                        class="form-input"
+                        placeholder="192.168.20.254"
+                        value="{{ form_data.dhcp_range_end if form_data is defined else vlan.dhcp_range_end or '' }}"
+                    >
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label for="dns_settings" class="form-label">
+                    DNS Settings
+                </label>
+
+                <textarea
+                    id="dns_settings"
+                    name="dns_settings"
+                    class="form-textarea"
+                >{{ form_data.dns_settings if form_data is defined else vlan.dns_settings or '' }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="firewall_notes" class="form-label">
+                    Firewall Notes
+                </label>
+
+                <textarea
+                    id="firewall_notes"
+                    name="firewall_notes"
+                    class="form-textarea"
+                >{{ form_data.firewall_notes if form_data is defined else vlan.firewall_notes or '' }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="allowed_access_rules" class="form-label">
+                    Allowed Access Rules
+                </label>
+
+                <textarea
+                    id="allowed_access_rules"
+                    name="allowed_access_rules"
+                    class="form-textarea"
+                >{{ form_data.allowed_access_rules if form_data is defined else vlan.allowed_access_rules or '' }}</textarea>
+            </div>
+
+            <button type="submit" class="form-button">
+                Save VLAN
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

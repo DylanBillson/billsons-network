@@ -1,0 +1,261 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1 style="margin: 0;">
+            Create Cable
+        </h1>
+
+        {% if current_location %}
+            <p style="color: var(--text-secondary); margin-bottom: 0;">
+                Location: {{ current_location.name }}
+            </p>
+        {% endif %}
+    </div>
+
+    <a
+        href="/cables"
+        class="nav-button"
+    >
+        Back to Cables
+    </a>
+
+</div>
+
+<div class="form-container" style="max-width: 900px;">
+
+    <div class="card">
+
+        {% if error %}
+            <div class="error-message">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="post" action="/cables/create">
+
+            <div class="form-group">
+                <label class="form-label" for="cable_id">
+                    Cable ID
+                </label>
+
+                <input
+                    type="text"
+                    id="cable_id"
+                    name="cable_id"
+                    class="form-input"
+                    placeholder="X305"
+                    value="{{ form_data.cable_id if form_data else '' }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="from_port_id">
+                    From Port
+                </label>
+
+                <select
+                    id="from_port_id"
+                    name="from_port_id"
+                    class="form-input"
+                >
+                    <option value="">
+                        -- Not Connected --
+                    </option>
+
+                    {% for port in ports %}
+
+                        <option
+                            value="{{ port.id }}"
+                            {% if form_data and form_data.from_port_id == port.id|string %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ port.device.name }} / {{ port.label }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="to_port_id">
+                    To Port
+                </label>
+
+                <select
+                    id="to_port_id"
+                    name="to_port_id"
+                    class="form-input"
+                >
+                    <option value="">
+                        -- Not Connected --
+                    </option>
+
+                    {% for port in ports %}
+
+                        <option
+                            value="{{ port.id }}"
+                            {% if form_data and form_data.to_port_id == port.id|string %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ port.device.name }} / {{ port.label }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="cable_type">
+                    Cable Type
+                </label>
+
+                <input
+                    type="text"
+                    id="cable_type"
+                    name="cable_type"
+                    class="form-input"
+                    placeholder="Cat6"
+                    value="{{ form_data.cable_type if form_data else '' }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="length">
+                    Length
+                </label>
+
+                <input
+                    type="text"
+                    id="length"
+                    name="length"
+                    class="form-input"
+                    placeholder="5m"
+                    value="{{ form_data.length if form_data else '' }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="colour">
+                    Colour
+                </label>
+
+                <input
+                    type="text"
+                    id="colour"
+                    name="colour"
+                    class="form-input"
+                    placeholder="Blue"
+                    value="{{ form_data.colour if form_data else '' }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="cable_supplied_by">
+                    Supplied By
+                </label>
+
+                <input
+                    type="text"
+                    id="cable_supplied_by"
+                    name="cable_supplied_by"
+                    class="form-input"
+                    value="{{ form_data.cable_supplied_by if form_data else '' }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="installed_date">
+                    Installed Date
+                </label>
+
+                <input
+                    type="date"
+                    id="installed_date"
+                    name="installed_date"
+                    class="form-input"
+                    value="{{ form_data.installed_date if form_data else '' }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="status">
+                    Status
+                </label>
+
+                <select
+                    id="status"
+                    name="status"
+                    class="form-input"
+                >
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="retired">Retired</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="last_tested_status">
+                    Test Status
+                </label>
+
+                <select
+                    id="last_tested_status"
+                    name="last_tested_status"
+                    class="form-input"
+                >
+                    <option value="">Not Set</option>
+                    <option value="not_tested">Not Tested</option>
+                    <option value="pass">Pass</option>
+                    <option value="fail">Fail</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="last_tested_date">
+                    Last Tested Date
+                </label>
+
+                <input
+                    type="date"
+                    id="last_tested_date"
+                    name="last_tested_date"
+                    class="form-input"
+                    value="{{ form_data.last_tested_date if form_data else '' }}"
+                >
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="route_notes">
+                    Route Notes
+                </label>
+
+                <textarea
+                    id="route_notes"
+                    name="route_notes"
+                    class="form-textarea"
+                >{{ form_data.route_notes if form_data else '' }}</textarea>
+            </div>
+
+            <button
+                type="submit"
+                class="form-button"
+            >
+                Create Cable
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -14,16 +14,13 @@
         </p>
     </div>
 
-    <a
-        href="/devices/{{ device.id }}/ports"
-        class="nav-button"
-    >
+    <a href="/devices/{{ device.id }}/ports" class="nav-button">
         Back to Ports
     </a>
 
 </div>
 
-<div class="form-container">
+<div class="form-container" style="max-width: 700px;">
 
     <div class="card">
 
@@ -33,16 +30,24 @@
             </div>
         {% endif %}
 
-        <form
-            method="post"
-            action="/devices/{{ device.id }}/ports/{{ port.id }}/edit"
-        >
+        {% if cable %}
+            <div class="card" style="margin-bottom: 20px;">
+                <h2 style="margin-top: 0;">
+                    Connected Cable
+                </h2>
+
+                <p>
+                    <a href="/cables/{{ cable.id }}" class="cable-badge">
+                        {{ cable.cable_id }}
+                    </a>
+                </p>
+            </div>
+        {% endif %}
+
+        <form method="post" action="/devices/{{ device.id }}/ports/{{ port.id }}/edit">
 
             <div class="form-group">
-                <label
-                    for="label"
-                    class="form-label"
-                >
+                <label for="label" class="form-label">
                     Port Label
                 </label>
 
@@ -51,17 +56,14 @@
                     id="label"
                     name="label"
                     class="form-input"
-                    value="{{ port.label }}"
+                    value="{{ form_data.label if form_data is defined else port.label }}"
                     required
                     autofocus
                 >
             </div>
 
             <div class="form-group">
-                <label
-                    for="sort_order"
-                    class="form-label"
-                >
+                <label for="sort_order" class="form-label">
                     Sort Order
                 </label>
 
@@ -71,15 +73,81 @@
                     name="sort_order"
                     class="form-input"
                     min="1"
-                    value="{{ port.sort_order }}"
+                    value="{{ form_data.sort_order if form_data is defined else port.sort_order }}"
                     required
                 >
             </div>
 
-            <button
-                type="submit"
-                class="form-button"
-            >
+            <div class="form-group">
+                <label for="vlan_mode" class="form-label">
+                    VLAN Mode
+                </label>
+
+                {% set selected_vlan_mode = form_data.vlan_mode if form_data is defined else port.vlan_mode %}
+
+                <select
+                    id="vlan_mode"
+                    name="vlan_mode"
+                    class="form-input"
+                >
+                    <option value="none" {% if selected_vlan_mode == "none" %}selected{% endif %}>
+                        None
+                    </option>
+
+                    <option value="access" {% if selected_vlan_mode == "access" %}selected{% endif %}>
+                        Access
+                    </option>
+
+                    <option value="trunk" {% if selected_vlan_mode == "trunk" %}selected{% endif %}>
+                        Trunk
+                    </option>
+
+                    <option value="uplink" {% if selected_vlan_mode == "uplink" %}selected{% endif %}>
+                        Uplink
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="vlan_id" class="form-label">
+                    Assigned VLAN
+                </label>
+
+                {% set selected_vlan_id = form_data.vlan_id if form_data is defined else port.vlan_id|string if port.vlan_id else "" %}
+
+                <select
+                    id="vlan_id"
+                    name="vlan_id"
+                    class="form-input"
+                >
+                    <option value="">
+                        None
+                    </option>
+
+                    {% for vlan in vlans %}
+                        <option
+                            value="{{ vlan.id }}"
+                            {% if selected_vlan_id == vlan.id|string %}selected{% endif %}
+                        >
+                            VLAN {{ vlan.vlan_number }} - {{ vlan.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="vlan_notes" class="form-label">
+                    VLAN Notes
+                </label>
+
+                <textarea
+                    id="vlan_notes"
+                    name="vlan_notes"
+                    class="form-textarea"
+                >{{ form_data.vlan_notes if form_data is defined else port.vlan_notes or '' }}</textarea>
+            </div>
+
+            <button type="submit" class="form-button">
                 Save Port
             </button>
 

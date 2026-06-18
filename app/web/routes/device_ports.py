@@ -1,11 +1,15 @@
-from fastapi import APIRouter, Depends, Form, Request
+from urllib.parse import urlencode
+
+from fastapi import APIRouter, Depends, Form, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import get_db, require_admin
 from app.models.user import User
+from app.services.cable_service import CableService
 from app.services.device_port_service import DevicePortService
+from app.services.device_port_vlan_service import DevicePortVLANService
 from app.services.device_service import DeviceService
 from app.services.location_service import LocationService
 from app.web.context import build_template_context
@@ -21,10 +25,18 @@ templates = Jinja2Templates(
 )
 
 
+def _parse_optional_int(value: str) -> int | None:
+    if not value:
+        return None
+
+    return int(value)
+
+
 @router.get("/{device_id}/ports", response_class=HTMLResponse)
 async def list_device_ports(
     device_id: int,
     request: Request,
+    error: str = Query(""),
     db: Session = Depends(get_db),
     current_user: User = Depends(require_admin),
 ):
@@ -44,6 +56,11 @@ async def list_device_ports(
         device.id,
     )
 
+    port_cable_map = CableService.get_device_cable_map(
+        db,
+        device.id,
+    )
+
     return templates.TemplateResponse(
         request=request,
         name="device_ports/list.html",
@@ -54,7 +71,8 @@ async def list_device_ports(
             current_location=LocationService.get_location(db, device.location_id),
             device=device,
             ports=ports,
-            error=None,
+            port_cable_map=port_cable_map,
+            error=error,
         ),
     )
 
@@ -84,9 +102,15 @@ async def add_device_ports(
             number_to_add=number_to_add,
         )
 
-    except ValueError:
+    except ValueError as exc:
+        query_string = urlencode(
+            {
+                "error": str(exc),
+            }
+        )
+
         return RedirectResponse(
-            url=f"/devices/{device.id}/ports",
+            url=f"/devices/{device.id}/ports?{query_string}",
             status_code=303,
         )
 
@@ -120,6 +144,16 @@ async def edit_device_port_form(
             status_code=303,
         )
 
+    cable = CableService.get_port_cable(
+        db,
+        port.id,
+    )
+
+    vlans = DevicePortService.list_vlans_for_port_device(
+        db,
+        port,
+    )
+
     return templates.TemplateResponse(
         request=request,
         name="device_ports/edit.html",
@@ -130,6 +164,8 @@ async def edit_device_port_form(
             current_location=LocationService.get_location(db, device.location_id),
             device=device,
             port=port,
+            cable=cable,
+            vlans=vlans,
             error=None,
         ),
     )
@@ -141,6 +177,9 @@ async def edit_device_port_submit(
     port_id: int,
     label: str = Form(...),
     sort_order: int = Form(...),
+    vlan_mode: str = Form("none"),
+    vlan_id: str = Form(""),
+    vlan_notes: str = Form(""),
     request: Request = None,
     db: Session = Depends(get_db),
     current_user: User = Depends(require_admin),
@@ -169,12 +208,30 @@ async def edit_device_port_submit(
             sort_order=sort_order,
         )
 
+        DevicePortVLANService.update_port_vlan(
+            db,
+            port=port,
+            vlan_mode=vlan_mode,
+            vlan_id=_parse_optional_int(vlan_id),
+            vlan_notes=vlan_notes,
+        )
+
         return RedirectResponse(
             url=f"/devices/{device.id}/ports",
             status_code=303,
         )
 
     except ValueError as exc:
+        cable = CableService.get_port_cable(
+            db,
+            port.id,
+        )
+
+        vlans = DevicePortService.list_vlans_for_port_device(
+            db,
+            port,
+        )
+
         return templates.TemplateResponse(
             request=request,
             name="device_ports/edit.html",
@@ -185,7 +242,16 @@ async def edit_device_port_submit(
                 current_location=LocationService.get_location(db, device.location_id),
                 device=device,
                 port=port,
+                cable=cable,
+                vlans=vlans,
                 error=str(exc),
+                form_data={
+                    "label": label,
+                    "sort_order": sort_order,
+                    "vlan_mode": vlan_mode,
+                    "vlan_id": vlan_id,
+                    "vlan_notes": vlan_notes,
+                },
             ),
             status_code=400,
         )
@@ -211,6 +277,23 @@ async def delete_device_port(
     if device is None or port is None or port.device_id != device.id:
         return RedirectResponse(
             url="/devices",
+            status_code=303,
+        )
+
+    cable = CableService.get_port_cable(
+        db,
+        port.id,
+    )
+
+    if cable is not None:
+        query_string = urlencode(
+            {
+                "error": f"Cannot delete port {port.label}; it is connected to cable {cable.cable_id}.",
+            }
+        )
+
+        return RedirectResponse(
+            url=f"/devices/{device.id}/ports?{query_string}",
             status_code=303,
         )
 

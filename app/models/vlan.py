@@ -1,5 +1,5 @@
 from sqlalchemy import ForeignKey, Integer, String, Text, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, SoftDeleteMixin, TimestampMixin
 
@@ -15,8 +15,16 @@ class VLAN(Base, TimestampMixin, SoftDeleteMixin):
     __tablename__ = "vlans"
 
     __table_args__ = (
-        UniqueConstraint("location_id", "vlan_number", name="uq_vlans_location_id_vlan_number"),
-        UniqueConstraint("location_id", "name", name="uq_vlans_location_id_name"),
+        UniqueConstraint(
+            "location_id",
+            "vlan_number",
+            name="uq_vlans_location_id_vlan_number",
+        ),
+        UniqueConstraint(
+            "location_id",
+            "name",
+            name="uq_vlans_location_id_name",
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -79,4 +87,9 @@ class VLAN(Base, TimestampMixin, SoftDeleteMixin):
     allowed_access_rules: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
+    )
+
+    location = relationship(
+        "Location",
+        foreign_keys=[location_id],
     )

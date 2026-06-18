@@ -23,7 +23,6 @@ class Device(Base, TimestampMixin, SoftDeleteMixin):
 
     name: Mapped[str] = mapped_column(
         String(255),
-        unique=True,
         nullable=False,
         index=True,
     )

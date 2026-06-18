@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Integer, String, UniqueConstraint
+from sqlalchemy import ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, TimestampMixin
@@ -51,7 +51,41 @@ class DevicePort(Base, TimestampMixin):
         nullable=False,
     )
 
+    vlan_id: Mapped[int | None] = mapped_column(
+        ForeignKey("vlans.id", ondelete="RESTRICT"),
+        nullable=True,
+        index=True,
+    )
+
+    vlan_mode: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False,
+        default="none",
+    )
+
+    vlan_notes: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
     device = relationship(
         "Device",
         back_populates="ports",
+    )
+
+    vlan = relationship(
+        "VLAN",
+        foreign_keys=[vlan_id],
+    )
+
+    cables_from = relationship(
+        "Cable",
+        foreign_keys="Cable.from_port_id",
+        overlaps="from_port",
+    )
+
+    cables_to = relationship(
+        "Cable",
+        foreign_keys="Cable.to_port_id",
+        overlaps="to_port",
     )

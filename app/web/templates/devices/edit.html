@@ -5,9 +5,19 @@
 <div class="page-header">
     <h1>Edit Device</h1>
 
-    <a href="/devices" class="nav-button">
-        Back to Devices
-    </a>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="/devices/{{ device.id }}" class="nav-button">
+            View Device
+        </a>
+
+        <a href="/devices/{{ device.id }}/ports" class="nav-button">
+            Manage Ports
+        </a>
+
+        <a href="/devices" class="nav-button">
+            Back to Devices
+        </a>
+    </div>
 </div>
 
 <div class="form-container">

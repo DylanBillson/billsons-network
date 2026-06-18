@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1 style="margin: 0;">
+            VLAN {{ vlan.vlan_number }}
+        </h1>
+
+        <p style="color: var(--text-secondary); margin-bottom: 0;">
+            {{ vlan.name }}
+        </p>
+    </div>
+
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="/vlans" class="nav-button">
+            Back to VLANs
+        </a>
+
+        {% if is_admin %}
+            <a href="/vlans/{{ vlan.id }}/edit" class="nav-button">
+                Edit VLAN
+            </a>
+        {% endif %}
+    </div>
+
+</div>
+
+<div class="card-grid">
+
+    <div class="card">
+
+        <h2 style="margin-top: 0;">
+            VLAN Information
+        </h2>
+
+        <table class="detail-table">
+            <tr>
+                <th>Name</th>
+                <td>{{ vlan.name }}</td>
+            </tr>
+
+            <tr>
+                <th>VLAN ID</th>
+                <td>{{ vlan.vlan_number }}</td>
+            </tr>
+
+            <tr>
+                <th>Location</th>
+                <td>{{ vlan.location.name if vlan.location else "-" }}</td>
+            </tr>
+
+            <tr>
+                <th>Subnet</th>
+                <td>{{ vlan.subnet or "-" }}</td>
+            </tr>
+
+            <tr>
+                <th>Gateway</th>
+                <td>{{ vlan.gateway or "-" }}</td>
+            </tr>
+
+            <tr>
+                <th>DHCP Range</th>
+                <td>
+                    {% if vlan.dhcp_range_start and vlan.dhcp_range_end %}
+                        {{ vlan.dhcp_range_start }} - {{ vlan.dhcp_range_end }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+    <div class="card">
+
+        <h2 style="margin-top: 0;">
+            DNS / Access
+        </h2>
+
+        <table class="detail-table">
+            <tr>
+                <th>DNS Settings</th>
+                <td style="white-space: pre-wrap;">{{ vlan.dns_settings or "-" }}</td>
+            </tr>
+
+            <tr>
+                <th>Allowed Access Rules</th>
+                <td style="white-space: pre-wrap;">{{ vlan.allowed_access_rules or "-" }}</td>
+            </tr>
+        </table>
+
+    </div>
+
+</div>
+
+{% if vlan.purpose %}
+
+    <div class="card" style="margin-top: 20px;">
+        <h2 style="margin-top: 0;">
+            Purpose
+        </h2>
+
+        <p style="white-space: pre-wrap;">
+            {{ vlan.purpose }}
+        </p>
+    </div>
+
+{% endif %}
+
+{% if vlan.firewall_notes %}
+
+    <div class="card" style="margin-top: 20px;">
+        <h2 style="margin-top: 0;">
+            Firewall Notes
+        </h2>
+
+        <p style="white-space: pre-wrap;">
+            {{ vlan.firewall_notes }}
+        </p>
+    </div>
+
+{% endif %}
+
+{% endblock %}

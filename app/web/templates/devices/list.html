@@ -22,6 +22,12 @@
     {% endif %}
 </div>
 
+{% if error %}
+    <div class="error-message">
+        {{ error }}
+    </div>
+{% endif %}
+
 {% if not current_location %}
 
     <div class="card">
@@ -79,7 +85,17 @@
                 {% if device.vlan %}
                     <p>
                         <strong>VLAN:</strong>
-                        {{ device.vlan.name }} ({{ device.vlan.vlan_number }})
+
+                        <a
+                            href="/vlans/{{ device.vlan.id }}"
+                            class="vlan-badge"
+                        >
+                            VLAN {{ device.vlan.vlan_number }}
+                        </a>
+
+                        <span>
+                            {{ device.vlan.name }}
+                        </span>
                     </p>
                 {% endif %}
 

@@ -1,12 +1,14 @@
 from datetime import date
+from urllib.parse import urlencode
 
-from fastapi import APIRouter, Depends, Form, Request
+from fastapi import APIRouter, Depends, Form, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import get_current_user, get_db, require_admin
 from app.models.user import User
+from app.services.cable_service import CableService
 from app.services.device_service import DeviceService
 from app.services.location_service import LocationService
 from app.web.context import build_template_context
@@ -25,6 +27,7 @@ templates = Jinja2Templates(
 @router.get("", response_class=HTMLResponse)
 async def list_devices(
     request: Request,
+    error: str = Query(""),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -50,6 +53,7 @@ async def list_devices(
             db=db,
             current_location=current_location,
             devices=devices,
+            error=error,
         ),
     )
 
@@ -202,6 +206,11 @@ async def detail_device(
             status_code=303,
         )
 
+    port_cable_map = CableService.get_device_cable_map(
+        db,
+        device.id,
+    )
+
     return templates.TemplateResponse(
         request=request,
         name="devices/detail.html",
@@ -212,6 +221,7 @@ async def detail_device(
             current_location=LocationService.get_location(db, device.location_id),
             device=device,
             ports=device.ports,
+            port_cable_map=port_cable_map,
         ),
     )
 
@@ -344,9 +354,15 @@ async def delete_device(
     try:
         DeviceService.delete_device(db, device)
 
-    except ValueError:
+    except ValueError as exc:
+        query_string = urlencode(
+            {
+                "error": str(exc),
+            }
+        )
+
         return RedirectResponse(
-            url="/devices",
+            url=f"/devices?{query_string}",
             status_code=303,
         )
 

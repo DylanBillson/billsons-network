@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1 style="margin: 0;">
+            Cable {{ cable.cable_id }}
+        </h1>
+
+        {% if current_location %}
+            <p style="color: var(--text-secondary); margin-bottom: 0;">
+                Location: {{ current_location.name }}
+            </p>
+        {% endif %}
+    </div>
+
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a href="/cables" class="nav-button">
+            Back to Cables
+        </a>
+
+        {% if is_admin %}
+            <a href="/cables/{{ cable.id }}/edit" class="nav-button">
+                Edit Cable
+            </a>
+        {% endif %}
+    </div>
+
+</div>
+
+<div class="card-grid">
+
+    <div class="card">
+
+        <h2 style="margin-top: 0;">
+            Cable Information
+        </h2>
+
+        <table class="detail-table">
+            <tr>
+                <th>Cable ID</th>
+                <td>
+                    <span class="cable-badge">
+                        {{ cable.cable_id }}
+                    </span>
+                </td>
+            </tr>
+
+            <tr>
+                <th>Status</th>
+                <td>{{ cable.status }}</td>
+            </tr>
+
+            <tr>
+                <th>Type</th>
+                <td>{{ cable.cable_type or "-" }}</td>
+            </tr>
+
+            <tr>
+                <th>Length</th>
+                <td>{{ cable.length or "-" }}</td>
+            </tr>
+
+            <tr>
+                <th>Colour</th>
+                <td>{{ cable.colour or "-" }}</td>
+            </tr>
+
+            <tr>
+                <th>Supplied By</th>
+                <td>{{ cable.cable_supplied_by or "-" }}</td>
+            </tr>
+
+            <tr>
+                <th>Installed Date</th>
+                <td>
+                    {% if cable.installed_date %}
+                        {{ cable.installed_date }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+    <div class="card">
+
+        <h2 style="margin-top: 0;">
+            Connection
+        </h2>
+
+        <table class="detail-table">
+            <tr>
+                <th>From</th>
+                <td>
+                    {% if cable.from_port and cable.from_port.device %}
+                        <a href="/devices/{{ cable.from_port.device.id }}">
+                            {{ cable.from_port.device.name }}
+                        </a>
+                        /
+                        {{ cable.from_port.label }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+
+            <tr>
+                <th>To</th>
+                <td>
+                    {% if cable.to_port and cable.to_port.device %}
+                        <a href="/devices/{{ cable.to_port.device.id }}">
+                            {{ cable.to_port.device.name }}
+                        </a>
+                        /
+                        {{ cable.to_port.label }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+
+    </div>
+
+</div>
+
+<div class="card" style="margin-top: 20px;">
+
+    <h2 style="margin-top: 0;">
+        Testing
+    </h2>
+
+    <table class="detail-table">
+        <tr>
+            <th>Test Status</th>
+            <td>{{ cable.last_tested_status or "-" }}</td>
+        </tr>
+
+        <tr>
+            <th>Last Tested Date</th>
+            <td>
+                {% if cable.last_tested_date %}
+                    {{ cable.last_tested_date }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+
+</div>
+
+{% if cable.route_notes %}
+
+    <div class="card" style="margin-top: 20px;">
+        <h2 style="margin-top: 0;">
+            Route Notes
+        </h2>
+
+        <p style="white-space: pre-wrap;">
+            {{ cable.route_notes }}
+        </p>
+    </div>
+
+{% endif %}
+
+{% endblock %}

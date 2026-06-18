@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1 style="margin: 0;">
+            Cables
+        </h1>
+
+        {% if current_location %}
+            <p style="color: var(--text-secondary); margin-bottom: 0;">
+                Location: {{ current_location.name }}
+            </p>
+        {% endif %}
+    </div>
+
+    {% if is_admin %}
+        <a href="/cables/create" class="nav-button">
+            Create Cable
+        </a>
+    {% endif %}
+
+</div>
+
+{% if not current_location %}
+
+    <div class="card">
+
+        <h2 style="margin-top: 0;">
+            No Location Selected
+        </h2>
+
+        <p>
+            Select a location before managing cables.
+        </p>
+
+    </div>
+
+{% elif cables %}
+
+    <div class="card">
+
+        <table class="data-table">
+
+            <thead>
+
+                <tr>
+                    <th>Cable ID</th>
+                    <th>Connection</th>
+                    <th>Type</th>
+                    <th>Length</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for cable in cables %}
+
+                    <tr>
+
+                        <td>
+                            <a
+                                href="/cables/{{ cable.id }}"
+                                class="cable-badge"
+                            >
+                                {{ cable.cable_id }}
+                            </a>
+                        </td>
+
+                        <td>
+
+                            {% if cable.from_port and cable.to_port %}
+
+                                <a href="/devices/{{ cable.from_port.device.id }}">
+                                    {{ cable.from_port.device.name }}
+                                </a>
+                                /
+                                {{ cable.from_port.label }}
+
+                                →
+
+                                <a href="/devices/{{ cable.to_port.device.id }}">
+                                    {{ cable.to_port.device.name }}
+                                </a>
+                                /
+                                {{ cable.to_port.label }}
+
+                            {% else %}
+
+                                <span style="color: var(--text-secondary);">
+                                    Not Connected
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ cable.cable_type or "-" }}
+                        </td>
+
+                        <td>
+                            {{ cable.length or "-" }}
+                        </td>
+
+                        <td>
+                            {{ cable.status }}
+                        </td>
+
+                        <td>
+
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+
+                                <a
+                                    href="/cables/{{ cable.id }}"
+                                    class="nav-button"
+                                >
+                                    View
+                                </a>
+
+                                {% if is_admin %}
+
+                                    <a
+                                        href="/cables/{{ cable.id }}/edit"
+                                        class="nav-button"
+                                    >
+                                        Edit
+                                    </a>
+
+                                    <form
+                                        method="post"
+                                        action="/cables/{{ cable.id }}/delete"
+                                        style="margin: 0;"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="nav-button"
+                                            onclick="return confirm('Delete this cable?');"
+                                        >
+                                            Delete
+                                        </button>
+
+                                    </form>
+
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+{% else %}
+
+    <div class="card">
+
+        <h2 style="margin-top: 0;">
+            No Cables
+        </h2>
+
+        <p>
+            No cables have been created for this location yet.
+        </p>
+
+        {% if is_admin %}
+
+            <a href="/cables/create" class="nav-button">
+                Create First Cable
+            </a>
+
+        {% endif %}
+
+    </div>
+
+{% endif %}
+
+{% endblock %}

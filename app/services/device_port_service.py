@@ -1,8 +1,9 @@
 from sqlalchemy import func, select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from app.models.device import Device
 from app.models.device_port import DevicePort
+from app.models.vlan import VLAN
 
 
 class DevicePortService:
@@ -14,6 +15,9 @@ class DevicePortService:
         return list(
             db.scalars(
                 select(DevicePort)
+                .options(
+                    selectinload(DevicePort.vlan),
+                )
                 .where(DevicePort.device_id == device_id)
                 .order_by(DevicePort.sort_order.asc())
             )
@@ -24,7 +28,41 @@ class DevicePortService:
         db: Session,
         port_id: int,
     ) -> DevicePort | None:
-        return db.get(DevicePort, port_id)
+        return db.scalar(
+            select(DevicePort)
+            .options(
+                selectinload(DevicePort.device),
+                selectinload(DevicePort.vlan),
+            )
+            .where(DevicePort.id == port_id)
+        )
+
+    @staticmethod
+    def list_vlans_for_port_device(
+        db: Session,
+        port: DevicePort,
+    ) -> list[VLAN]:
+        device = db.get(
+            Device,
+            port.device_id,
+        )
+
+        if device is None:
+            return []
+
+        return list(
+            db.scalars(
+                select(VLAN)
+                .where(
+                    VLAN.location_id == device.location_id,
+                    VLAN.is_deleted.is_(False),
+                )
+                .order_by(
+                    VLAN.vlan_number.asc(),
+                    VLAN.name.asc(),
+                )
+            )
+        )
 
     @staticmethod
     def add_ports(
@@ -50,6 +88,9 @@ class DevicePortService:
                     device_id=device.id,
                     label=str(sort_order),
                     sort_order=sort_order,
+                    vlan_mode="none",
+                    vlan_id=None,
+                    vlan_notes=None,
                 )
             )
 
@@ -107,6 +148,5 @@ class DevicePortService:
         db: Session,
         port: DevicePort,
     ) -> None:
-        # Cable dependency checks will be added when the Cables module exists.
         db.delete(port)
         db.commit()

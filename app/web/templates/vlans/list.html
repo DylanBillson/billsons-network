@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1 style="margin: 0;">
+            VLANs
+        </h1>
+
+        {% if current_location %}
+            <p style="color: var(--text-secondary); margin-bottom: 0;">
+                Location: {{ current_location.name }}
+            </p>
+        {% endif %}
+    </div>
+
+    {% if is_admin %}
+        <a
+            href="/vlans/create"
+            class="nav-button"
+        >
+            Create VLAN
+        </a>
+    {% endif %}
+
+</div>
+
+{% if error %}
+
+    <div class="error-message">
+        {{ error }}
+    </div>
+
+{% endif %}
+
+{% if not current_location %}
+
+    <div class="card">
+
+        <h2 style="margin-top: 0;">
+            No Location Selected
+        </h2>
+
+        <p>
+            Select a location before managing VLANs.
+        </p>
+
+    </div>
+
+{% elif vlans %}
+
+    <div class="card-grid">
+
+        {% for vlan in vlans %}
+
+            <div class="card">
+
+                <div
+                    style="
+                        display:flex;
+                        justify-content:space-between;
+                        align-items:center;
+                        margin-bottom:15px;
+                    "
+                >
+
+                    <h2 style="margin:0;">
+                        VLAN {{ vlan.vlan_number }}
+                    </h2>
+
+                    <span style="color:var(--text-secondary);">
+                        {{ vlan.name }}
+                    </span>
+
+                </div>
+
+                {% if vlan.purpose %}
+
+                    <p>
+                        {{ vlan.purpose }}
+                    </p>
+
+                {% endif %}
+
+                <table class="detail-table">
+
+                    <tr>
+                        <th>Subnet</th>
+                        <td>{{ vlan.subnet or "-" }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Gateway</th>
+                        <td>{{ vlan.gateway or "-" }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>DHCP Range</th>
+                        <td>
+                            {% if vlan.dhcp_range_start and vlan.dhcp_range_end %}
+                                {{ vlan.dhcp_range_start }}
+                                -
+                                {{ vlan.dhcp_range_end }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                </table>
+
+                <div
+                    style="
+                        display:flex;
+                        gap:10px;
+                        flex-wrap:wrap;
+                        margin-top:20px;
+                    "
+                >
+
+                    <a
+                        href="/vlans/{{ vlan.id }}"
+                        class="nav-button"
+                    >
+                        View
+                    </a>
+
+                    {% if is_admin %}
+
+                        <a
+                            href="/vlans/{{ vlan.id }}/edit"
+                            class="nav-button"
+                        >
+                            Edit
+                        </a>
+
+                        <form
+                            method="post"
+                            action="/vlans/{{ vlan.id }}/delete"
+                            style="margin:0;"
+                        >
+
+                            <button
+                                type="submit"
+                                class="nav-button"
+                                onclick="return confirm('Delete this VLAN?');"
+                            >
+                                Delete
+                            </button>
+
+                        </form>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% else %}
+
+    <div class="card">
+
+        <h2 style="margin-top:0;">
+            No VLANs
+        </h2>
+
+        <p>
+            No VLANs have been created for this location yet.
+        </p>
+
+        {% if is_admin %}
+
+            <a
+                href="/vlans/create"
+                class="nav-button"
+            >
+                Create First VLAN
+            </a>
+
+        {% endif %}
+
+    </div>
+
+{% endif %}
+
+{% endblock %}

@@ -9,33 +9,26 @@
             Port Management
         </h1>
 
-        <p
-            style="
-                color: var(--text-secondary);
-                margin-bottom: 0;
-            "
-        >
+        <p style="color: var(--text-secondary); margin-bottom: 0;">
             Device: {{ device.name }}
         </p>
     </div>
 
-    <div
-        style="
-            display: flex;
-            gap: 10px;
-        "
-    >
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
 
-        <a
-            href="/devices/{{ device.id }}"
-            class="nav-button"
-        >
+        <a href="/devices/{{ device.id }}" class="nav-button">
             Back to Device
         </a>
 
     </div>
 
 </div>
+
+{% if error %}
+    <div class="error-message">
+        {{ error }}
+    </div>
+{% endif %}
 
 <div class="card">
 
@@ -46,20 +39,12 @@
     <form
         method="post"
         action="/devices/{{ device.id }}/ports/add"
-        style="
-            display: flex;
-            gap: 10px;
-            align-items: end;
-            flex-wrap: wrap;
-        "
+        style="display: flex; gap: 10px; align-items: end; flex-wrap: wrap;"
     >
 
         <div class="form-group" style="margin: 0;">
 
-            <label
-                class="form-label"
-                for="number_to_add"
-            >
+            <label class="form-label" for="number_to_add">
                 Number of Ports
             </label>
 
@@ -78,10 +63,7 @@
         <button
             type="submit"
             class="form-button"
-            style="
-                width: auto;
-                min-width: 140px;
-            "
+            style="width: auto; min-width: 140px;"
         >
             Add Ports
         </button>
@@ -90,18 +72,9 @@
 
 </div>
 
-<div
-    class="card"
-    style="margin-top: 20px;"
->
+<div class="card" style="margin-top: 20px;">
 
-    <div
-        style="
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        "
-    >
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
 
         <h2 style="margin: 0;">
             Ports
@@ -122,6 +95,8 @@
                 <tr>
                     <th>Port</th>
                     <th>Sort Order</th>
+                    <th>Connection</th>
+                    <th>VLAN</th>
                     <th>Actions</th>
                 </tr>
 
@@ -131,10 +106,21 @@
 
                 {% for port in ports %}
 
+                    {% set cable = port_cable_map.get(port.id) %}
+                    {% set other_port = none %}
+
+                    {% if cable %}
+                        {% if cable.from_port_id == port.id %}
+                            {% set other_port = cable.to_port %}
+                        {% elif cable.to_port_id == port.id %}
+                            {% set other_port = cable.from_port %}
+                        {% endif %}
+                    {% endif %}
+
                     <tr>
 
                         <td>
-                            {{ port.label }}
+                            <strong>{{ port.label }}</strong>
                         </td>
 
                         <td>
@@ -142,13 +128,62 @@
                         </td>
 
                         <td>
+                            {% if cable %}
+                                <span class="connection-status connection-status-connected">
+                                    Connected
+                                </span>
 
-                            <div
-                                style="
-                                    display: flex;
-                                    gap: 10px;
-                                "
-                            >
+                                <a href="/cables/{{ cable.id }}" class="cable-badge">
+                                    {{ cable.cable_id }}
+                                </a>
+
+                                {% if other_port and other_port.device %}
+                                    <span>
+                                        →
+                                        {{ other_port.device.name }}
+                                        /
+                                        {{ other_port.label }}
+                                    </span>
+                                {% endif %}
+                            {% else %}
+                                <span class="connection-status connection-status-available">
+                                    Available
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if port.vlan_mode == "none" %}
+                                <span class="vlan-mode-badge">
+                                    None
+                                </span>
+                            {% else %}
+                                <span class="vlan-mode-badge">
+                                    {{ port.vlan_mode }}
+                                </span>
+
+                                {% if port.vlan %}
+                                    <a
+                                        href="/vlans/{{ port.vlan.id }}"
+                                        class="vlan-badge"
+                                    >
+                                        VLAN {{ port.vlan.vlan_number }}
+                                    </a>
+
+                                    <span>
+                                        {{ port.vlan.name }}
+                                    </span>
+                                {% else %}
+                                    <span style="color: var(--text-secondary);">
+                                        No VLAN selected
+                                    </span>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+
+                        <td>
+
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
 
                                 <a
                                     href="/devices/{{ device.id }}/ports/{{ port.id }}/edit"
@@ -157,21 +192,30 @@
                                     Edit
                                 </a>
 
-                                <form
-                                    method="post"
-                                    action="/devices/{{ device.id }}/ports/{{ port.id }}/delete"
-                                    style="margin: 0;"
-                                >
-
-                                    <button
-                                        type="submit"
+                                {% if cable %}
+                                    <a
+                                        href="/cables/{{ cable.id }}/edit"
                                         class="nav-button"
-                                        onclick="return confirm('Delete this port?');"
                                     >
-                                        Delete
-                                    </button>
+                                        Edit Cable
+                                    </a>
+                                {% else %}
+                                    <form
+                                        method="post"
+                                        action="/devices/{{ device.id }}/ports/{{ port.id }}/delete"
+                                        style="margin: 0;"
+                                    >
 
-                                </form>
+                                        <button
+                                            type="submit"
+                                            class="nav-button"
+                                            onclick="return confirm('Delete this port?');"
+                                        >
+                                            Delete
+                                        </button>
+
+                                    </form>
+                                {% endif %}
 
                             </div>
 
