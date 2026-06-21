@@ -4,9 +4,12 @@ from urllib.parse import urlencode
 from fastapi import APIRouter, Depends, Form, Query, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.orm import Session, selectinload
 
 from app.core.dependencies import get_current_user, get_db, require_admin
+from app.models.ssid import SSID
+from app.models.ssid_access_point import SSIDAccessPoint
 from app.models.user import User
 from app.services.cable_service import CableService
 from app.services.device_service import DeviceService
@@ -211,6 +214,21 @@ async def detail_device(
         device.id,
     )
 
+    ssid_assignments = list(
+        db.scalars(
+            select(SSIDAccessPoint)
+            .options(
+                selectinload(SSIDAccessPoint.ssid).selectinload(SSID.vlan),
+            )
+            .where(
+                SSIDAccessPoint.device_id == device.id,
+            )
+            .order_by(
+                SSIDAccessPoint.id.asc(),
+            )
+        )
+    )
+
     return templates.TemplateResponse(
         request=request,
         name="devices/detail.html",
@@ -222,6 +240,7 @@ async def detail_device(
             device=device,
             ports=device.ports,
             port_cable_map=port_cable_map,
+            ssid_assignments=ssid_assignments,
         ),
     )
 

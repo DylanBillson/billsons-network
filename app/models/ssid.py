@@ -1,5 +1,5 @@
 from sqlalchemy import ForeignKey, Integer, String, Text, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, SoftDeleteMixin, TimestampMixin
 
@@ -18,7 +18,11 @@ class SSID(Base, TimestampMixin, SoftDeleteMixin):
     __tablename__ = "ssids"
 
     __table_args__ = (
-        UniqueConstraint("location_id", "name", name="uq_ssids_location_id_name"),
+        UniqueConstraint(
+            "location_id",
+            "name",
+            name="uq_ssids_location_id_name",
+        ),
     )
 
     id: Mapped[int] = mapped_column(
@@ -57,4 +61,19 @@ class SSID(Base, TimestampMixin, SoftDeleteMixin):
     notes: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
+    )
+
+    location = relationship(
+        "Location",
+        foreign_keys=[location_id],
+    )
+
+    vlan = relationship(
+        "VLAN",
+        foreign_keys=[vlan_id],
+    )
+
+    access_points = relationship(
+        "SSIDAccessPoint",
+        back_populates="ssid",
     )

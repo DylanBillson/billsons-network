@@ -409,3 +409,50 @@ a {
     font-weight: 700;
     text-transform: capitalize;
 }
+/* SSIDs */
+
+.ssid-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 4px 8px;
+
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.ssid-badge:hover {
+    background: var(--accent);
+}
+
+.password-hidden {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+.warning-message {
+    margin-bottom: 16px;
+    padding: 10px;
+
+    border-radius: 6px;
+
+    background: var(--warning-bg);
+    border: 1px solid var(--warning-border);
+}
+
+.success-message {
+    margin-bottom: 16px;
+    padding: 10px;
+
+    border-radius: 6px;
+
+    background: var(--success-bg);
+    border: 1px solid var(--success-border);
+}

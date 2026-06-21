@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <h1>
+        Create SSID
+    </h1>
+
+    <a
+        href="/ssids"
+        class="nav-button"
+    >
+        Back to SSIDs
+    </a>
+
+</div>
+
+<div class="form-container">
+
+    <div class="card">
+
+        {% if error %}
+            <div class="error-message">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form
+            method="post"
+            action="/ssids/create"
+        >
+
+            <div class="form-group">
+
+                <label
+                    for="name"
+                    class="form-label"
+                >
+                    SSID Name
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    class="form-input"
+                    value="{{ form_data.name if form_data is defined else '' }}"
+                    required
+                    autofocus
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label
+                    for="security_type"
+                    class="form-label"
+                >
+                    Security Type
+                </label>
+
+                {% set selected_security = form_data.security_type if form_data is defined else '' %}
+
+                <select
+                    id="security_type"
+                    name="security_type"
+                    class="form-input"
+                >
+
+                    <option value="">
+                        None
+                    </option>
+
+                    <option value="open" {% if selected_security == "open" %}selected{% endif %}>
+                        Open
+                    </option>
+
+                    <option value="wpa2" {% if selected_security == "wpa2" %}selected{% endif %}>
+                        WPA2
+                    </option>
+
+                    <option value="wpa3" {% if selected_security == "wpa3" %}selected{% endif %}>
+                        WPA3
+                    </option>
+
+                    <option value="wpa2_wpa3" {% if selected_security == "wpa2_wpa3" %}selected{% endif %}>
+                        WPA2/WPA3 Mixed
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label
+                    for="password"
+                    class="form-label"
+                >
+                    Wi-Fi Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="form-input"
+                >
+
+                <small style="color: var(--text-secondary);">
+                    Passwords are encrypted before storage.
+                </small>
+
+            </div>
+
+            <div class="form-group">
+
+                <label
+                    for="vlan_id"
+                    class="form-label"
+                >
+                    VLAN
+                </label>
+
+                {% set selected_vlan = form_data.vlan_id if form_data is defined else '' %}
+
+                <select
+                    id="vlan_id"
+                    name="vlan_id"
+                    class="form-input"
+                >
+
+                    <option value="">
+                        None
+                    </option>
+
+                    {% for vlan in vlans %}
+
+                        <option
+                            value="{{ vlan.id }}"
+                            {% if selected_vlan == vlan.id|string %}selected{% endif %}
+                        >
+                            VLAN {{ vlan.vlan_number }} - {{ vlan.name }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label
+                    for="notes"
+                    class="form-label"
+                >
+                    Notes
+                </label>
+
+                <textarea
+                    id="notes"
+                    name="notes"
+                    class="form-textarea"
+                >{{ form_data.notes if form_data is defined else '' }}</textarea>
+
+            </div>
+
+            <button
+                type="submit"
+                class="form-button"
+            >
+                Create SSID
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1 style="margin: 0;">
+            {{ ssid.name }}
+        </h1>
+
+        <p style="color: var(--text-secondary); margin-bottom: 0;">
+            SSID Details
+        </p>
+    </div>
+
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+
+        <a href="/ssids" class="nav-button">
+            Back to SSIDs
+        </a>
+
+        {% if is_admin %}
+            <a href="/ssids/{{ ssid.id }}/edit" class="nav-button">
+                Edit SSID
+            </a>
+
+            <a href="/ssids/{{ ssid.id }}/access-points" class="nav-button">
+                Access Points
+            </a>
+        {% endif %}
+
+    </div>
+
+</div>
+
+<div class="card-grid">
+
+    <div class="card">
+
+        <h2 style="margin-top: 0;">
+            Wi-Fi Network
+        </h2>
+
+        <table class="detail-table">
+
+            <tr>
+                <th>SSID</th>
+                <td>{{ ssid.name }}</td>
+            </tr>
+
+            <tr>
+                <th>Security</th>
+                <td>{{ ssid.security_type or "-" }}</td>
+            </tr>
+
+            <tr>
+                <th>Password</th>
+                <td>
+                    {% if ssid.encrypted_password %}
+                        {% if is_admin %}
+                            <a
+                                href="/ssids/{{ ssid.id }}/reveal-password"
+                                class="nav-button"
+                            >
+                                Reveal Password
+                            </a>
+                        {% else %}
+                            Hidden
+                        {% endif %}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+
+            <tr>
+                <th>Location</th>
+                <td>{{ ssid.location.name if ssid.location else "-" }}</td>
+            </tr>
+
+            <tr>
+                <th>VLAN</th>
+                <td>
+                    {% if ssid.vlan %}
+                        <a href="/vlans/{{ ssid.vlan.id }}" class="vlan-badge">
+                            VLAN {{ ssid.vlan.vlan_number }}
+                        </a>
+
+                        <span>
+                            {{ ssid.vlan.name }}
+                        </span>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+
+        </table>
+
+    </div>
+
+    <div class="card">
+
+        <h2 style="margin-top: 0;">
+            Access Points
+        </h2>
+
+        {% if assignments %}
+
+            <table class="data-table">
+
+                <thead>
+                    <tr>
+                        <th>Device</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for assignment in assignments %}
+                        <tr>
+                            <td>
+                                <a href="/devices/{{ assignment.device.id }}">
+                                    {{ assignment.device.name }}
+                                </a>
+                            </td>
+
+                            <td>
+                                {{ assignment.device.device_type.name if assignment.device.device_type else "-" }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+
+        {% else %}
+
+            <p>
+                This SSID has not been assigned to any access points yet.
+            </p>
+
+            {% if is_admin %}
+                <a href="/ssids/{{ ssid.id }}/access-points" class="nav-button">
+                    Assign Access Points
+                </a>
+            {% endif %}
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% if ssid.notes %}
+
+    <div class="card" style="margin-top: 20px;">
+        <h2 style="margin-top: 0;">
+            Notes
+        </h2>
+
+        <p style="white-space: pre-wrap;">
+            {{ ssid.notes }}
+        </p>
+    </div>
+
+{% endif %}
+
+{% endblock %}

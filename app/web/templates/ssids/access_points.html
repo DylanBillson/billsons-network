@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1 style="margin: 0;">
+            SSID Access Points
+        </h1>
+
+        <p style="color: var(--text-secondary); margin-bottom: 0;">
+            SSID: {{ ssid.name }}
+        </p>
+    </div>
+
+    <div
+        style="
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        "
+    >
+
+        <a
+            href="/ssids/{{ ssid.id }}"
+            class="nav-button"
+        >
+            Back to SSID
+        </a>
+
+        <a
+            href="/ssids"
+            class="nav-button"
+        >
+            Back to SSIDs
+        </a>
+
+    </div>
+
+</div>
+
+{% if error %}
+    <div class="error-message">
+        {{ error }}
+    </div>
+{% endif %}
+
+<div class="card">
+
+    <h2 style="margin-top: 0;">
+        Assign Access Point
+    </h2>
+
+    <form
+        method="post"
+        action="/ssids/{{ ssid.id }}/access-points/add"
+        style="
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: end;
+        "
+    >
+
+        <div
+            class="form-group"
+            style="
+                flex: 1;
+                min-width: 300px;
+                margin-bottom: 0;
+            "
+        >
+
+            <label
+                for="device_id"
+                class="form-label"
+            >
+                Access Point
+            </label>
+
+            <select
+                id="device_id"
+                name="device_id"
+                class="form-input"
+                required
+            >
+
+                <option value="">
+                    Select Access Point
+                </option>
+
+                {% for device in available_devices %}
+
+                    <option value="{{ device.id }}">
+                        {{ device.name }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <button
+            type="submit"
+            class="form-button"
+            style="
+                width: auto;
+                min-width: 180px;
+            "
+        >
+            Assign
+        </button>
+
+    </form>
+
+</div>
+
+<div
+    class="card"
+    style="margin-top: 20px;"
+>
+
+    <div
+        style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        "
+    >
+
+        <h2 style="margin: 0;">
+            Assigned Access Points
+        </h2>
+
+        <span style="color: var(--text-secondary);">
+            {{ assignments|length }} assigned
+        </span>
+
+    </div>
+
+    {% if assignments %}
+
+        <table class="data-table">
+
+            <thead>
+
+                <tr>
+                    <th>Device</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for assignment in assignments %}
+
+                    <tr>
+
+                        <td>
+
+                            <a href="/devices/{{ assignment.device.id }}">
+                                {{ assignment.device.name }}
+                            </a>
+
+                        </td>
+
+                        <td>
+
+                            {% if assignment.device.device_type %}
+                                {{ assignment.device.device_type.name }}
+                            {% else %}
+                                -
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <form
+                                method="post"
+                                action="/ssids/{{ ssid.id }}/access-points/{{ assignment.id }}/delete"
+                                style="margin: 0;"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="nav-button"
+                                    onclick="return confirm('Remove this access point from the SSID?');"
+                                >
+                                    Remove
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    {% else %}
+
+        <p>
+            No access points are currently broadcasting this SSID.
+        </p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

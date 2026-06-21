@@ -1,5 +1,5 @@
 from sqlalchemy import ForeignKey, Integer, UniqueConstraint
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, TimestampMixin
 
@@ -38,4 +38,14 @@ class SSIDAccessPoint(Base, TimestampMixin):
         ForeignKey("devices.id", ondelete="RESTRICT"),
         nullable=False,
         index=True,
+    )
+
+    ssid = relationship(
+        "SSID",
+        back_populates="access_points",
+    )
+
+    device = relationship(
+        "Device",
+        foreign_keys=[device_id],
     )

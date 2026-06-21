@@ -158,6 +158,66 @@
 
 </div>
 
+{% if ssid_assignments %}
+
+    <div class="card" style="margin-top: 20px;">
+
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <h2 style="margin: 0;">
+                SSIDs Broadcast
+            </h2>
+
+            <span style="color: var(--text-secondary);">
+                {{ ssid_assignments|length }} SSID{% if ssid_assignments|length != 1 %}s{% endif %}
+            </span>
+        </div>
+
+        <table class="data-table">
+
+            <thead>
+                <tr>
+                    <th>SSID</th>
+                    <th>Security</th>
+                    <th>VLAN</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for assignment in ssid_assignments %}
+                    <tr>
+                        <td>
+                            <a href="/ssids/{{ assignment.ssid.id }}">
+                                {{ assignment.ssid.name }}
+                            </a>
+                        </td>
+
+                        <td>
+                            {{ assignment.ssid.security_type or "-" }}
+                        </td>
+
+                        <td>
+                            {% if assignment.ssid.vlan %}
+                                <a href="/vlans/{{ assignment.ssid.vlan.id }}" class="vlan-badge">
+                                    VLAN {{ assignment.ssid.vlan.vlan_number }}
+                                </a>
+
+                                <span>
+                                    {{ assignment.ssid.vlan.name }}
+                                </span>
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+
+    </div>
+
+{% endif %}
+
 {% if device.notes %}
 
     <div class="card" style="margin-top: 20px;">

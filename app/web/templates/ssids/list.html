@@ -1,0 +1,209 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1 style="margin: 0;">
+            SSIDs
+        </h1>
+
+        {% if current_location %}
+            <p style="color: var(--text-secondary); margin-bottom: 0;">
+                Location: {{ current_location.name }}
+            </p>
+        {% endif %}
+    </div>
+
+    {% if is_admin %}
+        <a
+            href="/ssids/create"
+            class="nav-button"
+        >
+            Create SSID
+        </a>
+    {% endif %}
+
+</div>
+
+{% if not current_location %}
+
+    <div class="card">
+
+        <h2 style="margin-top: 0;">
+            No Location Selected
+        </h2>
+
+        <p>
+            Select a location before managing SSIDs.
+        </p>
+
+    </div>
+
+{% elif ssids %}
+
+    <div class="card">
+
+        <table class="data-table">
+
+            <thead>
+
+                <tr>
+                    <th>SSID</th>
+                    <th>Security</th>
+                    <th>VLAN</th>
+                    <th>Access Points</th>
+                    <th>Actions</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for ssid in ssids %}
+
+                    <tr>
+
+                        <td>
+                            <strong>{{ ssid.name }}</strong>
+                        </td>
+
+                        <td>
+                            {{ ssid.security_type or "-" }}
+                        </td>
+
+                        <td>
+
+                            {% if ssid.vlan %}
+
+                                <a
+                                    href="/vlans/{{ ssid.vlan.id }}"
+                                    class="vlan-badge"
+                                >
+                                    VLAN {{ ssid.vlan.vlan_number }}
+                                </a>
+
+                                <span>
+                                    {{ ssid.vlan.name }}
+                                </span>
+
+                            {% else %}
+
+                                <span style="color: var(--text-secondary);">
+                                    -
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if ssid.access_points %}
+
+                                {{ ssid.access_points|length }}
+
+                            {% else %}
+
+                                <span style="color: var(--text-secondary);">
+                                    0
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <div
+                                style="
+                                    display: flex;
+                                    gap: 10px;
+                                    flex-wrap: wrap;
+                                "
+                            >
+
+                                <a
+                                    href="/ssids/{{ ssid.id }}"
+                                    class="nav-button"
+                                >
+                                    View
+                                </a>
+
+                                {% if is_admin %}
+
+                                    <a
+                                        href="/ssids/{{ ssid.id }}/edit"
+                                        class="nav-button"
+                                    >
+                                        Edit
+                                    </a>
+
+                                    <a
+                                        href="/ssids/{{ ssid.id }}/access-points"
+                                        class="nav-button"
+                                    >
+                                        Access Points
+                                    </a>
+
+                                    <form
+                                        method="post"
+                                        action="/ssids/{{ ssid.id }}/delete"
+                                        style="margin: 0;"
+                                    >
+
+                                        <button
+                                            type="submit"
+                                            class="nav-button"
+                                            onclick="return confirm('Delete this SSID?');"
+                                        >
+                                            Delete
+                                        </button>
+
+                                    </form>
+
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+{% else %}
+
+    <div class="card">
+
+        <h2 style="margin-top: 0;">
+            No SSIDs
+        </h2>
+
+        <p>
+            No SSIDs have been created for this location yet.
+        </p>
+
+        {% if is_admin %}
+
+            <a
+                href="/ssids/create"
+                class="nav-button"
+            >
+                Create First SSID
+            </a>
+
+        {% endif %}
+
+    </div>
+
+{% endif %}
+
+{% endblock %}
