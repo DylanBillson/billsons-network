@@ -19,13 +19,14 @@ services:
       - edge
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.billsons-network.rule=Host(`test.billson.network`)"
+      - "traefik.http.routers.billsons-network.rule=Host(`${TRAEFIK_HOST}`)"
       - "traefik.http.routers.billsons-network.entrypoints=websecure"
       - "traefik.http.routers.billsons-network.tls.certresolver=letsencrypt"
       - "traefik.http.services.billsons-network.loadbalancer.server.port=8000"
 
   db:
     image: postgres:17
+    restart: unless-stopped
     container_name: billsons_network_db
     env_file:
       - .env
