@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <h1 style="margin: 0;">
+            Admin
+        </h1>
+
+        <p style="color: var(--text-secondary); margin-bottom: 0;">
+            Manage Billson's Network settings and administration tools.
+        </p>
+
+    </div>
+
+</div>
+
+<div class="card-grid">
+
+    <div class="card">
+
+        <h2 style="margin-top: 0;">
+            Locations
+        </h2>
+
+        <p>
+            Create and manage network locations.
+        </p>
+
+        <a
+            href="/admin/locations"
+            class="nav-button"
+        >
+            Manage Locations
+        </a>
+
+    </div>
+
+    <div class="card">
+
+        <h2 style="margin-top: 0;">
+            Device Types
+        </h2>
+
+        <p>
+            Manage device categories, icons, and active status.
+        </p>
+
+        <a
+            href="/admin/device-types"
+            class="nav-button"
+        >
+            Manage Device Types
+        </a>
+
+    </div>
+
+    <div class="card">
+
+        <h2 style="margin-top: 0;">
+            Users
+        </h2>
+
+        <p>
+            User management will be added later.
+        </p>
+
+        <span class="connection-status connection-status-available">
+            Coming Soon
+        </span>
+
+    </div>
+
+    <div class="card">
+
+        <h2 style="margin-top: 0;">
+            Settings
+        </h2>
+
+        <p>
+            Application settings will be added later.
+        </p>
+
+        <span class="connection-status connection-status-available">
+            Coming Soon
+        </span>
+
+    </div>
+
+    <div class="card">
+
+        <h2 style="margin-top: 0;">
+            Audit Logs
+        </h2>
+
+        <p>
+            Audit log browsing will be added later.
+        </p>
+
+        <span class="connection-status connection-status-available">
+            Coming Soon
+        </span>
+
+    </div>
+
+    <div class="card">
+
+        <h2 style="margin-top: 0;">
+            Backups
+        </h2>
+
+        <p>
+            Backup tools will be added later.
+        </p>
+
+        <span class="connection-status connection-status-available">
+            Coming Soon
+        </span>
+
+    </div>
+
+</div>
+
+{% endblock %}

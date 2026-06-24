@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <h1 style="margin: 0;">
+            Edit Device Type
+        </h1>
+
+        <p style="color: var(--text-secondary); margin-bottom: 0;">
+            {{ device_type.name }}
+        </p>
+
+    </div>
+
+    <a
+        href="/admin/device-types"
+        class="nav-button"
+    >
+        Back
+    </a>
+
+</div>
+
+<div class="form-container">
+
+    <div class="card">
+
+        {% if error %}
+            <div class="error-message">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form
+            method="post"
+            action="/admin/device-types/{{ device_type.id }}/edit"
+        >
+
+            <div class="form-group">
+
+                <label
+                    for="name"
+                    class="form-label"
+                >
+                    Name
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    class="form-input"
+                    value="{{ device_type.name }}"
+                    required
+                    autofocus
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label
+                    for="slug"
+                    class="form-label"
+                >
+                    Slug
+                </label>
+
+                <input
+                    type="text"
+                    id="slug"
+                    name="slug"
+                    class="form-input"
+                    value="{{ device_type.slug }}"
+                    required
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label
+                    for="description"
+                    class="form-label"
+                >
+                    Description
+                </label>
+
+                <textarea
+                    id="description"
+                    name="description"
+                    class="form-textarea"
+                >{{ device_type.description or "" }}</textarea>
+
+            </div>
+
+            <div class="form-group">
+
+                <label
+                    for="icon_path"
+                    class="form-label"
+                >
+                    Icon Path
+                </label>
+
+                <input
+                    type="text"
+                    id="icon_path"
+                    name="icon_path"
+                    class="form-input"
+                    value="{{ device_type.icon_path or '' }}"
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label
+                    style="display: flex; gap: 10px; align-items: center;"
+                >
+                    <input
+                        type="checkbox"
+                        name="is_default"
+                        value="true"
+                        {% if device_type.is_default %}
+                            checked
+                        {% endif %}
+                    >
+
+                    Default Device Type
+                </label>
+
+            </div>
+
+            <div class="form-group">
+
+                <label
+                    style="display: flex; gap: 10px; align-items: center;"
+                >
+                    <input
+                        type="checkbox"
+                        name="is_active"
+                        value="true"
+                        {% if device_type.is_active %}
+                            checked
+                        {% endif %}
+                    >
+
+                    Active
+                </label>
+
+            </div>
+
+            <button
+                type="submit"
+                class="form-button"
+            >
+                Save Device Type
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

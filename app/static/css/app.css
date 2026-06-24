@@ -456,3 +456,45 @@ a {
     background: var(--success-bg);
     border: 1px solid var(--success-border);
 }
+
+/* Device Type Icons */
+
+.device-card-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.device-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.device-type-icon {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.device-detail-icon {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.device-type-icon-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    color: var(--text-secondary);
+    font-weight: bold;
+}

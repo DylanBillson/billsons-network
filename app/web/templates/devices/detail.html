@@ -4,14 +4,32 @@
 
 <div class="page-header">
 
-    <div>
-        <h1 style="margin: 0;">
-            {{ device.name }}
-        </h1>
+    <div class="device-detail-header">
 
-        <p style="margin-top: 8px; color: var(--text-secondary);">
-            {{ device.device_type.name if device.device_type else "Unknown Type" }}
-        </p>
+        {% if device.device_type and device.device_type.icon_path %}
+            <img
+                src="{{ device.device_type.icon_path }}"
+                alt="{{ device.device_type.name }} icon"
+                class="device-detail-icon"
+            >
+        {% else %}
+            <div class="device-detail-icon device-type-icon-placeholder">
+                ?
+            </div>
+        {% endif %}
+
+        <div>
+
+            <h1 style="margin: 0;">
+                {{ device.name }}
+            </h1>
+
+            <p style="margin-top: 8px; color: var(--text-secondary);">
+                {{ device.device_type.name if device.device_type else "Unknown Type" }}
+            </p>
+
+        </div>
+
     </div>
 
     <div style="display: flex; gap: 10px; flex-wrap: wrap;">

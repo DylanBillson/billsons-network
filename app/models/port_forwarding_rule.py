@@ -1,8 +1,7 @@
 from sqlalchemy import Boolean, CheckConstraint, ForeignKey, Integer, String, Text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base, SoftDeleteMixin, TimestampMixin
-
 
 class PortForwardingRule(Base, TimestampMixin, SoftDeleteMixin):
     """
@@ -100,4 +99,9 @@ class PortForwardingRule(Base, TimestampMixin, SoftDeleteMixin):
     notes: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
+    )
+
+    router_device = relationship(
+        "Device",
+        foreign_keys=[router_device_id],
     )

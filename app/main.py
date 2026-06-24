@@ -9,7 +9,9 @@ from app.web.routes import (
     dashboard_router,
     device_ports_router,
     devices_router,
+    device_types_router,
     locations_router,
+    port_forwarding_router,
     ssids_router,
     vlans_router,
 )
@@ -33,6 +35,8 @@ app.include_router(device_ports_router)
 app.include_router(cables_router)
 app.include_router(vlans_router)
 app.include_router(ssids_router)
+app.include_router(device_types_router)
+app.include_router(port_forwarding_router)
 app.include_router(admin_router)
 
 

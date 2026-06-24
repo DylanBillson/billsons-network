@@ -54,19 +54,36 @@
 
             <div class="card">
 
-                <h2 style="margin-top: 0;">
-                    <a
-                        href="/devices/{{ device.id }}"
-                        style="text-decoration: none;"
-                    >
-                        {{ device.name }}
-                    </a>
-                </h2>
+                <div class="device-card-header">
 
-                <p>
-                    <strong>Type:</strong>
-                    {{ device.device_type.name if device.device_type else "Unknown" }}
-                </p>
+                    {% if device.device_type and device.device_type.icon_path %}
+                        <img
+                            src="{{ device.device_type.icon_path }}"
+                            alt="{{ device.device_type.name }} icon"
+                            class="device-type-icon"
+                        >
+                    {% else %}
+                        <div class="device-type-icon device-type-icon-placeholder">
+                            ?
+                        </div>
+                    {% endif %}
+
+                    <div>
+                        <h2 style="margin: 0;">
+                            <a
+                                href="/devices/{{ device.id }}"
+                                style="text-decoration: none;"
+                            >
+                                {{ device.name }}
+                            </a>
+                        </h2>
+
+                        <p style="margin: 6px 0 0 0; color: var(--text-secondary);">
+                            {{ device.device_type.name if device.device_type else "Unknown Type" }}
+                        </p>
+                    </div>
+
+                </div>
 
                 {% if device.manufacturer or device.model %}
                     <p>

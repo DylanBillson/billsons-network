@@ -129,3 +129,8 @@ class Device(Base, TimestampMixin, SoftDeleteMixin):
         back_populates="device",
         order_by="DevicePort.sort_order",
     )
+
+    port_forwarding_rules = relationship(
+        "PortForwardingRule",
+        foreign_keys="PortForwardingRule.router_device_id",
+    )

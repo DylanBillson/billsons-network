@@ -12,10 +12,22 @@ DEFAULT_DEVICE_TYPES = [
         "icon_path": "/static/icons/router.svg",
     },
     {
+        "name": "Modem",
+        "slug": "modem",
+        "description": "Internet modem, ONT or gateway device",
+        "icon_path": "/static/icons/modem.svg",
+    },
+    {
         "name": "Switch",
         "slug": "switch",
         "description": "Network switch",
         "icon_path": "/static/icons/switch.svg",
+    },
+    {
+        "name": "Ethernet Socket",
+        "slug": "ethernet-socket",
+        "description": "Wall-mounted Ethernet socket or patch socket",
+        "icon_path": "/static/icons/ethernet-socket.svg",
     },
     {
         "name": "Access Point",
