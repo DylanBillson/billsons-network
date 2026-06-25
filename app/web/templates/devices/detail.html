@@ -19,7 +19,6 @@
         {% endif %}
 
         <div>
-
             <h1 style="margin: 0;">
                 {{ device.name }}
             </h1>
@@ -27,7 +26,6 @@
             <p style="margin-top: 8px; color: var(--text-secondary);">
                 {{ device.device_type.name if device.device_type else "Unknown Type" }}
             </p>
-
         </div>
 
     </div>
@@ -46,6 +44,12 @@
             <a href="/devices/{{ device.id }}/ports" class="nav-button">
                 Manage Ports
             </a>
+
+            {% if device.device_type and device.device_type.slug == "router" %}
+                <a href="/devices/{{ device.id }}/port-forwarding" class="nav-button">
+                    Port Forwarding
+                </a>
+            {% endif %}
         {% endif %}
 
     </div>
@@ -175,6 +179,104 @@
     </div>
 
 </div>
+
+{% if device.device_type and device.device_type.slug == "router" %}
+
+    <div class="card" style="margin-top: 20px;">
+
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+
+            <h2 style="margin: 0;">
+                Port Forwarding
+            </h2>
+
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+
+                <span style="color: var(--text-secondary);">
+                    {{ port_forwarding_rules|length }} rule{% if port_forwarding_rules|length != 1 %}s{% endif %}
+                </span>
+
+                {% if is_admin %}
+                    <a
+                        href="/devices/{{ device.id }}/port-forwarding"
+                        class="nav-button"
+                    >
+                        Manage Rules
+                    </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        {% if port_forwarding_rules %}
+
+            <table class="data-table">
+
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Protocol</th>
+                        <th>External</th>
+                        <th>Internal</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for rule in port_forwarding_rules %}
+                        <tr>
+                            <td>
+                                <strong>{{ rule.rule_name }}</strong>
+                            </td>
+
+                            <td>
+                                {{ rule.protocol|upper }}
+                            </td>
+
+                            <td>
+                                {{ rule.external_port_start }}
+                                {% if rule.external_port_end %}
+                                    - {{ rule.external_port_end }}
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ rule.internal_ip_address }} :
+                                {{ rule.internal_port_start }}
+                                {% if rule.internal_port_end %}
+                                    - {{ rule.internal_port_end }}
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if rule.is_enabled %}
+                                    <span class="connection-status connection-status-connected">
+                                        Enabled
+                                    </span>
+                                {% else %}
+                                    <span class="connection-status connection-status-available">
+                                        Disabled
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+
+        {% else %}
+
+            <p>
+                No port forwarding rules have been documented for this router.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+{% endif %}
 
 {% if ssid_assignments %}
 

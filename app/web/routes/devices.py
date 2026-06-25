@@ -14,6 +14,7 @@ from app.models.user import User
 from app.services.cable_service import CableService
 from app.services.device_service import DeviceService
 from app.services.location_service import LocationService
+from app.services.port_forwarding_service import PortForwardingService
 from app.web.context import build_template_context
 
 
@@ -229,6 +230,14 @@ async def detail_device(
         )
     )
 
+    port_forwarding_rules = []
+
+    if device.device_type and device.device_type.slug == "router":
+        port_forwarding_rules = PortForwardingService.list_rules_for_router(
+            db,
+            device.id,
+        )
+
     return templates.TemplateResponse(
         request=request,
         name="devices/detail.html",
@@ -241,6 +250,7 @@ async def detail_device(
             ports=device.ports,
             port_cable_map=port_cable_map,
             ssid_assignments=ssid_assignments,
+            port_forwarding_rules=port_forwarding_rules,
         ),
     )
 

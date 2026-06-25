@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <h1 style="margin: 0;">
+            Edit Port Forwarding Rule
+        </h1>
+
+        <p style="color: var(--text-secondary); margin-bottom: 0;">
+            Router: {{ router_device.name }}
+        </p>
+
+    </div>
+
+    <a
+        href="/devices/{{ router_device.id }}/port-forwarding"
+        class="nav-button"
+    >
+        Back to Rules
+    </a>
+
+</div>
+
+<div class="form-container" style="max-width: 700px;">
+
+    <div class="card">
+
+        {% if error %}
+            <div class="error-message">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <form
+            method="post"
+            action="/devices/{{ router_device.id }}/port-forwarding/{{ rule.id }}/edit"
+        >
+
+            <div class="form-group">
+
+                <label
+                    for="rule_name"
+                    class="form-label"
+                >
+                    Rule Name
+                </label>
+
+                <input
+                    type="text"
+                    id="rule_name"
+                    name="rule_name"
+                    class="form-input"
+                    value="{{ rule.rule_name }}"
+                    required
+                    autofocus
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label
+                    for="protocol"
+                    class="form-label"
+                >
+                    Protocol
+                </label>
+
+                <select
+                    id="protocol"
+                    name="protocol"
+                    class="form-input"
+                >
+
+                    <option
+                        value="tcp"
+                        {% if rule.protocol == "tcp" %}selected{% endif %}
+                    >
+                        TCP
+                    </option>
+
+                    <option
+                        value="udp"
+                        {% if rule.protocol == "udp" %}selected{% endif %}
+                    >
+                        UDP
+                    </option>
+
+                    <option
+                        value="tcp_udp"
+                        {% if rule.protocol == "tcp_udp" %}selected{% endif %}
+                    >
+                        TCP / UDP
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="card" style="margin-bottom: 20px;">
+
+                <h3 style="margin-top: 0;">
+                    External Ports
+                </h3>
+
+                <div class="form-group">
+
+                    <label
+                        for="external_port_start"
+                        class="form-label"
+                    >
+                        Start Port
+                    </label>
+
+                    <input
+                        type="number"
+                        id="external_port_start"
+                        name="external_port_start"
+                        min="1"
+                        max="65535"
+                        class="form-input"
+                        value="{{ rule.external_port_start }}"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label
+                        for="external_port_end"
+                        class="form-label"
+                    >
+                        End Port (optional)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="external_port_end"
+                        name="external_port_end"
+                        min="1"
+                        max="65535"
+                        class="form-input"
+                        value="{{ rule.external_port_end or '' }}"
+                    >
+
+                </div>
+
+            </div>
+
+            <div class="card" style="margin-bottom: 20px;">
+
+                <h3 style="margin-top: 0;">
+                    Internal Destination
+                </h3>
+
+                <div class="form-group">
+
+                    <label
+                        for="internal_ip_address"
+                        class="form-label"
+                    >
+                        Internal IP Address
+                    </label>
+
+                    <input
+                        type="text"
+                        id="internal_ip_address"
+                        name="internal_ip_address"
+                        class="form-input"
+                        value="{{ rule.internal_ip_address }}"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label
+                        for="internal_port_start"
+                        class="form-label"
+                    >
+                        Start Port
+                    </label>
+
+                    <input
+                        type="number"
+                        id="internal_port_start"
+                        name="internal_port_start"
+                        min="1"
+                        max="65535"
+                        class="form-input"
+                        value="{{ rule.internal_port_start }}"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-group">
+
+                    <label
+                        for="internal_port_end"
+                        class="form-label"
+                    >
+                        End Port (optional)
+                    </label>
+
+                    <input
+                        type="number"
+                        id="internal_port_end"
+                        name="internal_port_end"
+                        min="1"
+                        max="65535"
+                        class="form-input"
+                        value="{{ rule.internal_port_end or '' }}"
+                    >
+
+                </div>
+
+            </div>
+
+            <div class="form-group">
+
+                <label class="form-label">
+                    Enabled
+                </label>
+
+                <label>
+
+                    <input
+                        type="checkbox"
+                        name="is_enabled"
+                        value="true"
+                        {% if rule.is_enabled %}checked{% endif %}
+                    >
+
+                    Rule Enabled
+
+                </label>
+
+            </div>
+
+            <div class="form-group">
+
+                <label
+                    for="notes"
+                    class="form-label"
+                >
+                    Notes
+                </label>
+
+                <textarea
+                    id="notes"
+                    name="notes"
+                    class="form-textarea"
+                >{{ rule.notes or "" }}</textarea>
+
+            </div>
+
+            <button
+                type="submit"
+                class="form-button"
+            >
+                Save Rule
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

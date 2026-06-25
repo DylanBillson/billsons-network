@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+
+        <h1 style="margin: 0;">
+            Port Forwarding Rules
+        </h1>
+
+        <p style="color: var(--text-secondary); margin-bottom: 0;">
+            Router: {{ router_device.name }}
+        </p>
+
+    </div>
+
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+
+        <a
+            href="/devices/{{ router_device.id }}"
+            class="nav-button"
+        >
+            Back to Device
+        </a>
+
+        <a
+            href="/devices/{{ router_device.id }}/port-forwarding/create"
+            class="nav-button"
+        >
+            Create Rule
+        </a>
+
+    </div>
+
+</div>
+
+{% if error %}
+    <div class="error-message">
+        {{ error }}
+    </div>
+{% endif %}
+
+<div class="card">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap;">
+
+        <h2 style="margin: 0;">
+            Rules
+        </h2>
+
+        <span style="color: var(--text-secondary);">
+            {{ rules|length }} rule{% if rules|length != 1 %}s{% endif %}
+        </span>
+
+    </div>
+
+    {% if rules %}
+
+        <table class="data-table">
+
+            <thead>
+
+                <tr>
+                    <th>Name</th>
+                    <th>Protocol</th>
+                    <th>External</th>
+                    <th>Internal</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for rule in rules %}
+
+                    <tr>
+
+                        <td>
+                            <strong>{{ rule.rule_name }}</strong>
+                        </td>
+
+                        <td>
+                            {{ rule.protocol|upper }}
+                        </td>
+
+                        <td>
+
+                            {{ rule.external_port_start }}
+
+                            {% if rule.external_port_end %}
+                                - {{ rule.external_port_end }}
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {{ rule.internal_ip_address }} :
+
+                            {{ rule.internal_port_start }}
+
+                            {% if rule.internal_port_end %}
+                                - {{ rule.internal_port_end }}
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if rule.is_enabled %}
+                                <span class="connection-status connection-status-connected">
+                                    Enabled
+                                </span>
+                            {% else %}
+                                <span class="connection-status connection-status-available">
+                                    Disabled
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+
+                                <a
+                                    href="/devices/{{ router_device.id }}/port-forwarding/{{ rule.id }}/edit"
+                                    class="nav-button"
+                                >
+                                    Edit
+                                </a>
+
+                                <form
+                                    method="post"
+                                    action="/devices/{{ router_device.id }}/port-forwarding/{{ rule.id }}/delete"
+                                    style="margin: 0;"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="nav-button"
+                                        onclick="return confirm('Delete this port forwarding rule?');"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    {% else %}
+
+        <p>
+            No port forwarding rules have been documented for this router.
+        </p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
